@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Element451 — Feature Voting</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --orange: #FE5000; --orange-dark: #D94200;
+    --orange-light: #FFF0EB; --orange-mid: #FFD0BC;
+    --black: #0A0A0A; --gray-900: #1C1C1C;
+    --gray-500: #6B6B6B; --gray-400: #9B9B9B; --gray-300: #C4C4C4;
+    --gray-100: #F2F2F2; --gray-50: #F8F8F8; --white: #FFFFFF;
+    --tester-bg: #FFFBEB; --tester-border: #FDE68A; --tester-text: #92400E;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; display: flex; flex-direction: column; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(255,255,255,0.96); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--gray-100);
+    padding: 0 2rem; height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo svg { height: 22px; width: auto; }
+  .nav-badge { font-size: 11px; font-weight: 600; padding: 4px 12px; background: var(--orange-light); color: var(--orange-dark); border-radius: 20px; border: 1px solid var(--orange-mid); letter-spacing: 0.02em; }
+
+  main { flex: 1; padding-top: 60px; display: flex; align-items: flex-start; justify-content: center; min-height: 100vh; }
+  .container { width: 100%; max-width: 660px; padding: 3rem 1.5rem 4rem; }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeUp 0.3s ease both; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  .loading-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--gray-100); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 14px; color: var(--gray-400); }
+
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 1.25rem; }
+  .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+  h1 { font-size: 40px; font-weight: 600; line-height: 1.08; letter-spacing: -0.03em; color: var(--black); margin-bottom: 1rem; }
+  h1 span { color: var(--orange); }
+  .hero-sub { font-size: 16px; line-height: 1.7; color: var(--gray-500); margin-bottom: 2.5rem; max-width: 500px; }
+
+  .card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px; padding: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .field-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px; }
+  .email-row { display: flex; gap: 10px; }
+  .email-row input { flex: 1; height: 46px; padding: 0 14px; border: 1.5px solid #E0E0E0; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 15px; background: var(--gray-50); color: var(--gray-900); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+  .email-row input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(254,80,0,0.1); background: var(--white); }
+  .btn-primary { height: 46px; padding: 0 22px; background: var(--orange); color: white; border: none; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 7px; transition: background 0.15s, transform 0.1s; }
+  .btn-primary:hover:not(:disabled) { background: var(--orange-dark); }
+  .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .inline-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  .email-error { margin-top: 10px; font-size: 13px; color: #C0392B; display: none; align-items: center; gap: 6px; }
+  .trust-line { margin-top: 14px; font-size: 12px; color: var(--gray-300); display: flex; align-items: center; gap: 6px; }
+
+  /* Tester banner */
+  .tester-banner { background: var(--tester-bg); border: 1px solid var(--tester-border); border-radius: 12px; padding: 10px 14px; margin-bottom: 1.5rem; font-size: 12px; color: var(--tester-text); display: flex; align-items: center; gap: 8px; }
+  .tester-banner strong { font-weight: 600; }
+
+  /* Vote screen */
+  .vote-header { margin-bottom: 2rem; }
+  .vote-header h2 { font-size: 30px; font-weight: 600; letter-spacing: -0.025em; color: var(--black); margin-bottom: 0.5rem; line-height: 1.2; }
+  .vote-header h2 span { color: var(--orange); }
+  .vote-header p { font-size: 15px; color: var(--gray-500); line-height: 1.65; }
+
+  .budget-strip { position: sticky; top: 60px; z-index: 50; background: rgba(248,248,248,0.96); backdrop-filter: blur(8px); padding: 12px 0; margin-bottom: 1.5rem; }
+  .budget-inner { background: var(--white); border: 1px solid var(--gray-100); border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .budget-left-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-300); margin-bottom: 3px; }
+  .budget-number { font-size: 30px; font-weight: 600; letter-spacing: -0.03em; color: var(--black); line-height: 1; transition: color 0.2s; }
+  .budget-number.zero { color: var(--orange); }
+  .budget-dots { display: flex; gap: 5px; align-items: center; }
+  .bdot { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--gray-100); background: var(--gray-50); transition: background 0.2s, border-color 0.2s, transform 0.15s; }
+  .bdot.used { background: var(--orange); border-color: var(--orange); transform: scale(1.08); }
+
+  .feature-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 2rem; }
+  .fcard { background: var(--white); border: 1.5px solid var(--gray-100); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .fcard.on { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(254,80,0,0.07); }
+  .fcard-num { font-size: 10px; font-weight: 700; color: var(--gray-300); min-width: 18px; text-align: center; flex-shrink: 0; }
+  .fcard.on .fcard-num { color: var(--orange); }
+  .fcard-body { flex: 1; min-width: 0; }
+  .fcard-name { font-size: 14px; font-weight: 500; color: var(--black); margin-bottom: 2px; letter-spacing: -0.01em; }
+  .fcard-desc { font-size: 12px; color: var(--gray-500); line-height: 1.4; }
+  .stepper { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .sbtn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--gray-100); background: var(--gray-50); color: var(--gray-900); font-size: 17px; cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; transition: background 0.1s, border-color 0.1s, transform 0.1s; font-family: 'Inter', sans-serif; }
+  .sbtn:hover:not(:disabled) { background: var(--gray-100); border-color: var(--gray-300); }
+  .sbtn:active:not(:disabled) { transform: scale(0.9); }
+  .sbtn:disabled { opacity: 0.2; cursor: not-allowed; }
+  .sval { font-size: 15px; font-weight: 600; min-width: 20px; text-align: center; color: var(--black); font-variant-numeric: tabular-nums; }
+  .sval.on { color: var(--orange); }
+
+  .submit-area { text-align: center; }
+  .btn-submit { width: 100%; height: 52px; background: var(--orange); color: white; border: none; border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; transition: background 0.15s, transform 0.1s, opacity 0.2s; }
+  .btn-submit:hover:not(:disabled) { background: var(--orange-dark); }
+  .btn-submit:active:not(:disabled) { transform: scale(0.99); }
+  .btn-submit:disabled { opacity: 0.3; cursor: not-allowed; }
+  .submit-hint { font-size: 13px; color: var(--gray-300); }
+  .submit-hint.ready { color: var(--orange); font-weight: 500; }
+  .error-banner { background: #FFF5F5; border: 1px solid #FED7D7; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #C53030; margin-top: 10px; display: none; }
+
+  /* Result cards */
+  .result-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px; padding: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px; }
+  .confirm-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--orange-light); border: 1px solid var(--orange-mid); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
+  .result-card h2 { font-size: 26px; font-weight: 600; letter-spacing: -0.025em; margin-bottom: 0.4rem; }
+  .result-card > p { font-size: 14px; color: var(--gray-500); line-height: 1.65; margin-bottom: 1.25rem; }
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-300); margin-bottom: 10px; }
+  .my-votes { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
+  .mv-row { display: flex; align-items: center; gap: 10px; }
+  .mv-name { font-size: 13px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--gray-900); }
+  .mv-bar-wrap { width: 80px; height: 4px; background: var(--gray-100); border-radius: 2px; overflow: hidden; }
+  .mv-bar-fill { height: 100%; background: var(--orange); border-radius: 2px; }
+  .mv-pts { font-size: 12px; font-weight: 600; color: var(--orange); min-width: 36px; text-align: right; }
+  .result-footer { font-size: 12px; color: var(--gray-300); border-top: 1px solid var(--gray-100); padding-top: 1.25rem; line-height: 1.65; }
+
+  /* Leaderboard */
+  .lb-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px; padding: 1.5rem 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px; }
+  .lb-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+  .lb-title { font-size: 14px; font-weight: 600; color: var(--black); }
+  .lb-meta { font-size: 11px; color: var(--gray-300); }
+  .lb-rows { display: flex; flex-direction: column; gap: 14px; }
+  .lb-row { display: flex; flex-direction: column; gap: 5px; }
+  .lb-row-top { display: flex; align-items: center; gap: 8px; }
+  .lb-medal { font-size: 15px; flex-shrink: 0; width: 22px; }
+  .lb-name { font-size: 13px; font-weight: 500; color: var(--black); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lb-pts { font-size: 13px; font-weight: 600; color: var(--gray-900); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .lb-pct { font-size: 11px; color: var(--gray-300); min-width: 36px; text-align: right; flex-shrink: 0; }
+  .lb-track { height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+  .lb-fill { height: 100%; border-radius: 3px; transition: width 0.7s ease 0.1s; }
+  .lb-fill.r0 { background: var(--orange); }
+  .lb-fill.r1 { background: #FF6B2B; }
+  .lb-fill.r2 { background: #FF8C5A; }
+  .lb-fill.r3 { background: #FFA87A; }
+  .lb-fill.r4 { background: #FFB899; }
+  .lb-empty { font-size: 13px; color: var(--gray-300); text-align: center; padding: 1rem 0; }
+
+  /* Buttons */
+  .start-over { display: block; text-align: center; margin-top: 0.5rem; font-size: 13px; color: var(--gray-300); background: none; border: none; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-family: 'Inter', sans-serif; padding: 4px; }
+  .start-over:hover { color: var(--gray-500); }
+  .btn-tester-reset { display: block; width: 100%; margin-top: 10px; height: 44px; background: var(--tester-bg); color: var(--tester-text); border: 1.5px solid var(--tester-border); border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .btn-tester-reset:hover { background: #FEF3C7; }
+
+  footer { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--gray-300); border-top: 1px solid var(--gray-100); }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 30px; }
+    .container { padding: 2rem 1rem 3rem; }
+    .budget-dots { display: none; }
+    nav { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <svg viewBox="0 0 232 56" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Element451">
+      <path d="M71.5838 9.34477H68.3767V7.32923H74.2229L74.0946 26.7151H76.7336V28.7489H69.0914V26.7151H71.4555L71.5838 9.34477Z" fill="#F36D38"/>
+      <path d="M97.2961 26.715H99.4219L99.5502 14.2003H96.8745V12.1847H102.171C102.171 12.826 102.134 13.7239 102.079 14.1819L101.823 15.8493H101.896C102.611 13.3391 105.268 11.7999 107.779 11.7999C110.803 11.7999 112.379 13.5406 112.782 15.6844H112.837C113.167 14.9698 114.193 11.7999 118.463 11.7999C123.027 11.7999 124.145 14.8782 124.145 18.0298C124.145 20.8516 124.016 24.168 124.016 26.7333H126.454V28.7488H119.27V26.7333H121.396C121.432 24.0398 121.524 21.3646 121.524 18.7078C121.524 16.3074 121.011 13.9804 117.932 13.9804C115.769 13.9804 113.204 15.3913 113.185 19.8804L113.112 26.715H115.494V28.7305H108.274V26.715H110.4C110.436 24.0215 110.528 21.3463 110.528 18.6894C110.528 16.2891 110.015 13.9621 106.936 13.9621C104.773 13.9621 102.208 15.3729 102.189 19.8621L102.134 26.6966H104.535V28.7122H97.3327V26.715" fill="#F36D38"/>
+      <path d="M158.544 26.7151H160.67C160.67 24.1498 160.798 21.438 160.798 18.7812C160.798 17.1687 160.725 13.9622 157.041 13.9622C154.695 13.9622 152.129 15.3731 152.129 19.8622L152.074 26.6968H154.475V28.7123H147.273V26.6968H149.399L149.527 14.1821H146.87V12.1665H152.166C152.166 12.8078 152.129 13.7057 152.074 14.1638L151.818 15.8312H151.891C152.606 13.3209 155.263 11.7817 157.774 11.7817C162.337 11.7817 163.455 14.86 163.455 18.0116C163.455 20.8334 163.327 24.1498 163.327 26.7151H165.764V28.7306H158.58V26.7151" fill="#F36D38"/>
+      <path d="M166.351 12.1665H169.008L169.137 8.11711L171.776 7.9522L171.647 12.1665H176.852V14.1821H171.611C171.556 16.9488 171.482 19.734 171.482 22.5007C171.482 24.8827 171.482 26.9349 174.012 26.9349C175.368 26.9349 176.577 26.5502 177.292 26.257L177.2 28.3458C176.357 28.7673 174.818 29.1154 173.48 29.1154C168.862 29.1154 168.862 25.7989 168.862 23.6917C168.862 21.6762 168.953 16.6007 168.99 14.1821H166.351V12.1665Z" fill="#F36D38"/>
+      <path d="M59.6533 11.6534C54.5952 11.6534 50.9298 15.3363 50.9298 20.4118C50.9298 25.2491 54.7968 29.1886 59.5617 29.1886C63.2087 29.1886 66.0676 27.1547 67.6071 23.4718L67.6987 23.2519H64.9864L64.9314 23.3435C63.8868 25.5789 61.9075 26.8616 59.4884 26.8616C56.1713 26.8616 53.7338 24.6078 53.4039 21.2364H68.1202V20.9249C68.1386 15.4646 64.6382 11.6534 59.6533 11.6534ZM53.4956 19.1659C54.0454 15.996 56.3179 13.9621 59.3418 13.9621C62.5856 13.9621 64.6382 15.7028 65.4445 19.1659H53.4956Z" fill="#F36D38"/>
+      <path d="M86.5754 11.6534C81.5172 11.6534 77.8519 15.3363 77.8519 20.4118C77.8519 25.2491 81.7188 29.1886 86.4837 29.1886C90.1308 29.1886 92.9897 27.1547 94.5292 23.4718L94.6208 23.2519H91.9084L91.8535 23.3435C90.8088 25.5789 88.8296 26.8616 86.4104 26.8616C83.0933 26.8616 80.6559 24.6078 80.326 21.2364H95.0423V20.9249C95.0606 15.4646 91.5786 11.6534 86.5754 11.6534ZM80.436 19.1659C80.9858 15.996 83.2583 13.9621 86.2822 13.9621C89.526 13.9621 91.5786 15.7028 92.3849 19.1659H80.436Z" fill="#F36D38"/>
+      <path d="M145.056 20.9249C145.056 15.4646 141.574 11.6534 136.57 11.6534C131.512 11.6534 127.847 15.3363 127.847 20.4118C127.847 25.2491 131.714 29.1886 136.479 29.1886C140.126 29.1886 142.985 27.1547 144.524 23.4718L144.616 23.2519H141.903L141.848 23.3435C140.804 25.5789 138.825 26.8616 136.405 26.8616C133.088 26.8616 130.651 24.6078 130.339 21.2364H145.056V20.9249ZM130.413 19.1659C130.962 15.996 133.235 13.9621 136.259 13.9621C139.503 13.9621 141.555 15.7028 142.362 19.1659H130.413Z" fill="#F36D38"/>
+      <path d="M188.911 28.8406V24.0033H179.437V21.1816L188.911 7.07276H192.852V20.6868H196.059V23.985H192.852V28.8223H188.911V28.8406ZM188.911 14.8234C188.911 14.3837 188.948 13.7607 189.003 13.1377C189.076 12.6613 189.131 11.5986 189.186 11.0855L183.138 20.7052H188.893V14.8234H188.911Z" fill="#F36D38"/>
+      <path d="M199.742 7.09095H213.285L212.937 10.4074H202.619L202.033 16.6373C202.784 15.7395 204.122 14.1637 207.091 14.1637C211.471 14.1637 214.605 17.5351 214.605 21.383C214.605 24.5895 212.259 28.8405 206.12 28.8405C204.544 28.8405 201.391 28.5107 199.302 26.3302C198.129 25.1026 197.836 23.9482 197.579 22.9954L201.355 22.4457C201.575 23.1237 202.436 25.7256 205.918 25.7256C209.272 25.7256 210.353 23.2153 210.353 21.3647C210.353 19.1109 208.795 17.132 206.248 17.132C205.203 17.132 204.159 17.4618 203.371 18.0299C202.619 18.5795 202.326 19.1292 202.033 19.6423L198.514 18.9643L199.742 7.09095Z" fill="#F36D38"/>
+      <path d="M225.913 25.7072H231.925V28.8405H215.614V25.7072H222.047V12.2397C218.913 14.9149 217.373 15.5929 216.219 16.0693V12.2397C219.041 11.1587 219.664 10.9022 221.625 9.1065C222.743 8.0804 223.036 7.64065 223.348 7.09095H225.913V25.7072Z" fill="#F36D38"/>
+      <path d="M31.9434 40.3658C31.7601 40.3658 31.5952 40.2925 31.4852 40.1643C31.3752 40.036 31.3203 39.8528 31.3386 39.6879L31.5952 37.8372C31.6318 37.5441 31.8884 37.3059 32.2 37.3059H35.3155C37.9545 37.2509 39.1824 35.9133 39.1824 33.0915C39.1824 32.1387 39.0541 31.1676 38.9258 30.2331L38.8342 29.4636C38.6326 28.1809 38.431 26.9716 38.431 25.5974C38.376 22.5558 39.6589 20.6685 42.2063 19.9905C39.6589 19.4958 38.431 17.6818 38.431 14.6035C38.431 13.2843 38.6143 12.1299 38.8159 10.9206L38.9258 10.0594C39.0541 9.12491 39.1824 8.15378 39.1824 7.23763C39.1824 4.39755 37.9912 3.11493 35.2972 3.05996H10.886C8.21035 3.09661 7.01911 4.37922 7.01911 7.21931C7.01911 8.13546 7.1474 9.08826 7.27569 10.0227L7.36732 10.7923C7.58724 12.1299 7.77051 13.3026 7.77051 14.6218C7.82549 17.6268 6.54262 19.4958 3.99521 20.1737C6.50597 20.6501 7.77051 22.5374 7.77051 25.5974C7.77051 26.9716 7.56891 28.2542 7.36732 29.5002L7.27569 30.2148C7.1474 31.1676 7.01911 32.1387 7.01911 33.0915C7.01911 35.9316 8.247 37.2692 10.9044 37.3059H23.8247C24.1545 37.3059 24.4294 37.5807 24.4294 37.9105V39.7612C24.4294 40.091 24.1545 40.3658 23.8247 40.3658H10.7028C5.84621 40.3658 3.28047 37.9288 3.28047 33.3481C3.28047 32.1754 3.42709 30.8928 3.73864 29.1704L3.8486 28.2726C3.97689 27.1915 4.08685 26.1654 4.08685 25.1576C4.08685 22.8672 2.95059 21.6762 0.586453 21.548C0.256573 21.5297 0 21.2548 0 20.9433V19.2759C0 18.9461 0.256573 18.6896 0.568127 18.6713C3.55537 18.5247 4.01354 16.784 4.06852 15.0982C4.06852 13.669 3.8486 12.1665 3.66533 10.9755C3.44541 9.39976 3.26215 8.04385 3.26215 6.72458C3.26215 2.382 5.91951 0 10.7394 0H35.4438C40.2637 0 42.9211 2.382 42.9211 6.72458C42.9211 8.04385 42.7378 9.38143 42.5362 10.7923C42.2979 12.4414 42.1147 13.7607 42.1147 15.1166C42.1147 16.1243 42.1147 18.5063 45.6151 18.6713C45.945 18.6896 46.1832 18.9461 46.1832 19.2759V20.9433C46.1832 21.2731 45.9266 21.5297 45.6151 21.548C43.3059 21.6762 42.188 22.8306 42.1147 25.176C42.1147 26.4036 42.2979 27.7045 42.4995 29.0605C42.7011 30.4164 42.9211 31.9189 42.9211 33.3297C42.9211 37.9288 40.3553 40.3475 35.4988 40.3475H31.9434" fill="#F36D38"/>
+      <path d="M19.5361 37.3057C18.8763 37.3057 18.4182 37.8371 18.4915 38.4784L19.6461 47.7866C19.7194 48.4279 20.2875 48.776 20.8923 48.5195L23.3297 47.5667C23.9345 47.3285 24.4293 47.6766 24.4293 48.3179V55.5006C24.4293 56.1602 24.5576 56.1602 24.7042 55.5372L27.6731 43.4623C27.8197 42.821 27.4532 42.4545 26.8118 42.6378L25.6938 42.9493C25.0707 43.1325 24.6309 42.7477 24.7225 42.1064L25.2357 38.4784C25.3273 37.8371 24.8692 37.3057 24.2094 37.3057H19.5361Z" fill="#F36D38"/>
+      <path d="M21.6622 13.7424C21.0208 13.7424 20.4893 14.2738 20.4893 14.9151V16.8207C20.4893 17.462 21.0208 17.9934 21.6622 17.9934H27.2885C27.93 17.9934 28.4614 18.5248 28.4614 19.1661V20.7785C28.4614 21.4198 27.93 21.9512 27.2885 21.9512H21.6622C21.0208 21.9512 20.4893 22.4825 20.4893 23.1239V25.4326C20.4893 26.0739 21.0208 26.6052 21.6622 26.6052H29.4327C30.0742 26.6052 30.6056 27.1366 30.6056 27.7779V29.5003C30.6056 30.1416 30.0742 30.673 29.4327 30.673H16.769C16.1276 30.673 15.5961 30.1416 15.5961 29.5003V10.8474C15.5961 10.2061 16.1276 9.67469 16.769 9.67469H29.4327C30.0742 9.67469 30.6056 10.2061 30.6056 10.8474V12.5697C30.6056 13.211 30.0742 13.7424 29.4327 13.7424H21.6622Z" fill="#F36D38"/>
+    </svg>
+  </div>
+  <span class="nav-badge">Roadmap Voting July 2026</span>
+</nav>
+
+<main>
+  <div class="container">
+
+    <!-- LOADING -->
+    <div id="screen-loading" class="screen active">
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading…</div>
+      </div>
+    </div>
+
+    <!-- EMAIL -->
+    <div id="screen-email" class="screen">
+      <div class="eyebrow"><span class="eyebrow-dot"></span>Customer input</div>
+      <h1>Help us build what <span>matters</span> to you</h1>
+      <p class="hero-sub">You have 10 points to distribute across features our product team is considering. Your input directly shapes our 2026 roadmap.</p>
+      <div class="card">
+        <label class="field-label" for="email-input">Your work email</label>
+        <div class="email-row">
+          <input type="email" id="email-input" placeholder="you@institution.edu" autocomplete="email" />
+          <button class="btn-primary" id="email-btn" onclick="checkEmail()">
+            <span id="email-btn-label">Continue</span>
+            <svg id="email-btn-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="email-btn-spinner" class="inline-spinner" style="display:none"></span>
+          </button>
+        </div>
+        <div class="email-error" id="email-error">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#C0392B" stroke-width="1.5"/><path d="M7 4v3.5M7 9.5v.5" stroke="#C0392B" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span id="email-error-msg">That email isn't on our list. Reach out to your account manager for access.</span>
+        </div>
+        <div class="trust-line">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5l4 1.5v3.5c0 2.5-1.5 4-4 5-2.5-1-4-2.5-4-5V3l4-1.5z" stroke="#C4C4C4" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          Access-gated — only invited customers can participate
+        </div>
+      </div>
+    </div>
+
+    <!-- VOTE -->
+    <div id="screen-vote" class="screen">
+      <div id="tester-vote-banner" class="tester-banner" style="display:none">
+        🧪 <span><strong>Testing mode</strong> — your vote will be flagged as a test response</span>
+      </div>
+      <div class="vote-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>10 points to allocate</div>
+        <h2>Which features should we build <span>first?</span></h2>
+        <p>Use + and − to give points to the features that matter most. Concentrate everything on one or spread them around.</p>
+      </div>
+      <div class="budget-strip">
+        <div class="budget-inner">
+          <div>
+            <div class="budget-left-label">Points remaining</div>
+            <div class="budget-number" id="budget-num">10</div>
+          </div>
+          <div class="budget-dots" id="budget-dots"></div>
+        </div>
+      </div>
+      <div class="feature-list" id="feature-list"></div>
+      <div class="submit-area">
+        <button class="btn-submit" id="submit-btn" onclick="submitVotes()" disabled>
+          <span id="submit-label">Submit my votes</span>
+          <svg id="submit-arrow" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5h11M8.5 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="submit-spinner" class="inline-spinner" style="display:none"></span>
+        </button>
+        <div class="submit-hint" id="submit-hint">Allocate all 10 points to submit</div>
+        <div class="error-banner" id="submit-error">Something went wrong submitting your votes. Please try again.</div>
+      </div>
+    </div>
+
+    <!-- CONFIRM -->
+    <div id="screen-confirm" class="screen">
+      <div id="tester-confirm-banner" class="tester-banner" style="display:none">
+        🧪 <span><strong>Test response recorded.</strong> This vote is flagged in the Responses tab.</span>
+      </div>
+      <div class="result-card">
+        <div class="confirm-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4.5 11l5 5 8-9" stroke="#FE5000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2>Thanks for your input!</h2>
+        <p>Your votes are recorded. Here's how you distributed your 10 points.</p>
+        <div class="section-label">Your allocation</div>
+        <div class="my-votes" id="confirm-my-votes"></div>
+        <div class="result-footer">We'll use this feedback when planning our 2026 roadmap. Keep an eye on your inbox for product updates.</div>
+      </div>
+      <div class="lb-card">
+        <div class="lb-header">
+          <div class="lb-title">🏆 Current top 5</div>
+          <div class="lb-meta" id="confirm-lb-meta"></div>
+        </div>
+        <div class="lb-rows" id="confirm-lb-rows"></div>
+      </div>
+      <button class="start-over" id="confirm-start-over" onclick="startOver()">↩ Start over</button>
+      <button class="btn-tester-reset" id="confirm-tester-reset" style="display:none" onclick="testerReset()">🧪 Testing — Start Over (resets your vote)</button>
+    </div>
+
+    <!-- RETURNING -->
+    <div id="screen-returning" class="screen">
+      <div id="tester-returning-banner" class="tester-banner" style="display:none">
+        🧪 <span><strong>Testing mode</strong> — use the reset button below to vote again</span>
+      </div>
+      <div class="eyebrow"><span class="eyebrow-dot"></span>Welcome back</div>
+      <h1>You've already <span>voted</span></h1>
+      <p class="hero-sub" style="margin-bottom:1.5rem;">Here's a recap of your submission and how the community is voting right now.</p>
+      <div class="result-card">
+        <h2>Your votes</h2>
+        <p>How you distributed your 10 points.</p>
+        <div class="section-label">Your allocation</div>
+        <div class="my-votes" id="returning-my-votes"></div>
+      </div>
+      <div class="lb-card">
+        <div class="lb-header">
+          <div class="lb-title">🏆 Current top 5</div>
+          <div class="lb-meta" id="returning-lb-meta"></div>
+        </div>
+        <div class="lb-rows" id="returning-lb-rows"></div>
+        <div class="result-footer" style="margin-top:1.25rem;">Voting closes when we've heard from all invited customers. Results will be shared with the community.</div>
+      </div>
+      <button class="start-over" id="returning-start-over" onclick="startOver()">↩ Start over</button>
+      <button class="btn-tester-reset" id="returning-tester-reset" style="display:none" onclick="testerReset()">🧪 Testing — Start Over (resets your vote)</button>
+    </div>
+
+  </div>
+</main>
+
+<footer>Element451 · Confidential — for invited customers only</footer>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbx0x87rzH-nJ2kAYv4dqTttyL_hVnoW2b-Iu6xW6soIMKQp8GPGIZRDas0EDgY6Jj-8FA/exec";
+const TOTAL = 10;
+
+let features = [];
+let votes = {};
+let currentEmail = "";
+let currentIsTester = false;
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function apiFetch(params) {
+  const url = API + '?' + new URLSearchParams(params);
+  const res = await fetch(url);
+  return res.json();
+}
+
+async function apiPost(body) {
+  const res = await fetch(API, { method: 'POST', body: JSON.stringify(body) });
+  return res.json();
+}
+
+// ── Boot ──────────────────────────────────────────────────────
+async function boot() {
+  try {
+    const data = await apiFetch({ action: 'getFeatures' });
+    if (data.error || !data.features) throw new Error(data.error || 'No features');
+    features = data.features;
+    features.forEach(f => votes[f.id] = 0);
+    showScreen('email');
+  } catch(e) {
+    document.querySelector('.loading-text').textContent = 'Failed to load. Please refresh.';
+  }
+}
+
+// ── Email check ───────────────────────────────────────────────
+async function checkEmail() {
+  const val = document.getElementById('email-input').value.trim().toLowerCase();
+  if (!val) return;
+  const err = document.getElementById('email-error');
+  const btn = document.getElementById('email-btn');
+  const arrow = document.getElementById('email-btn-arrow');
+  const spinner = document.getElementById('email-btn-spinner');
+
+  btn.disabled = true; arrow.style.display = 'none'; spinner.style.display = 'block'; err.style.display = 'none';
+
+  try {
+    const data = await apiFetch({ action: 'checkVoter', email: val });
+    if (!data.allowed) {
+      document.getElementById('email-error-msg').textContent = "That email isn't on our list. Reach out to your account manager for access.";
+      err.style.display = 'flex';
+    } else {
+      currentEmail = val;
+      currentIsTester = data.isTester === true;
+      if (data.hasVoted) {
+        await buildReturningScreen(data.priorVotes);
+        showScreen('returning');
+      } else {
+        buildVoteUI();
+        showScreen('vote');
+      }
+    }
+  } catch(e) {
+    document.getElementById('email-error-msg').textContent = 'Connection error. Please try again.';
+    err.style.display = 'flex';
+  }
+
+  btn.disabled = false; arrow.style.display = ''; spinner.style.display = 'none';
+}
+
+document.getElementById('email-input').addEventListener('keydown', e => { if(e.key === 'Enter') checkEmail(); });
+
+// ── Vote UI ───────────────────────────────────────────────────
+function buildVoteUI() {
+  // Show/hide tester banner
+  document.getElementById('tester-vote-banner').style.display = currentIsTester ? 'flex' : 'none';
+
+  const list = document.getElementById('feature-list');
+  list.innerHTML = '';
+  features.forEach((f, i) => {
+    const d = document.createElement('div');
+    d.className = 'fcard'; d.id = 'fcard-' + f.id;
+    d.innerHTML = `
+      <div class="fcard-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="fcard-body">
+        <div class="fcard-name">${f.name}</div>
+        <div class="fcard-desc">${f.desc}</div>
+      </div>
+      <div class="stepper">
+        <button class="sbtn" id="m-${f.id}" onclick="adjust(${f.id},-1)" disabled>−</button>
+        <span class="sval" id="v-${f.id}">0</span>
+        <button class="sbtn" id="p-${f.id}" onclick="adjust(${f.id},1)">+</button>
+      </div>`;
+    list.appendChild(d);
+  });
+  renderBudget();
+}
+
+function adjust(id, delta) {
+  const nv = votes[id] + delta;
+  const used = Object.values(votes).reduce((a,b) => a+b, 0);
+  if (nv < 0 || (delta > 0 && used >= TOTAL)) return;
+  votes[id] = nv;
+  const ve = document.getElementById('v-'+id);
+  ve.textContent = nv; ve.className = 'sval' + (nv > 0 ? ' on' : '');
+  document.getElementById('fcard-'+id).className = 'fcard' + (nv > 0 ? ' on' : '');
+  document.getElementById('m-'+id).disabled = nv === 0;
+  renderBudget();
+}
+
+function renderBudget() {
+  const used = Object.values(votes).reduce((a,b) => a+b, 0);
+  const rem = TOTAL - used;
+  const ne = document.getElementById('budget-num');
+  ne.textContent = rem; ne.className = 'budget-number' + (rem === 0 ? ' zero' : '');
+  const de = document.getElementById('budget-dots');
+  de.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'bdot' + (i < used ? ' used' : '');
+    de.appendChild(d);
+  }
+  features.forEach(f => { const pb = document.getElementById('p-'+f.id); if(pb) pb.disabled = rem === 0; });
+  const sb = document.getElementById('submit-btn'), sh = document.getElementById('submit-hint');
+  sb.disabled = rem !== 0;
+  if (rem === 0) { sh.textContent = 'Ready — go ahead and submit!'; sh.className = 'submit-hint ready'; }
+  else if (rem === TOTAL) { sh.textContent = 'Allocate all 10 points to submit'; sh.className = 'submit-hint'; }
+  else { sh.textContent = `${rem} point${rem !== 1 ? 's' : ''} left to allocate`; sh.className = 'submit-hint'; }
+}
+
+// ── Submit ────────────────────────────────────────────────────
+async function submitVotes() {
+  const btn = document.getElementById('submit-btn');
+  const label = document.getElementById('submit-label');
+  const arrow = document.getElementById('submit-arrow');
+  const spinner = document.getElementById('submit-spinner');
+  const errBanner = document.getElementById('submit-error');
+
+  btn.disabled = true; label.textContent = 'Submitting…'; arrow.style.display = 'none'; spinner.style.display = 'block'; errBanner.style.display = 'none';
+
+  try {
+    const result = await apiPost({ action: 'submitVotes', email: currentEmail, votes, isTester: currentIsTester });
+    if (result.error) throw new Error(result.error);
+
+    // Build confirm screen
+    const myVoted = features.filter(f => votes[f.id] > 0).sort((a,b) => votes[b.id]-votes[a.id]);
+    document.getElementById('confirm-my-votes').innerHTML = renderMyVotes(myVoted, votes);
+    document.getElementById('tester-confirm-banner').style.display = currentIsTester ? 'flex' : 'none';
+    document.getElementById('confirm-tester-reset').style.display = currentIsTester ? 'block' : 'none';
+    document.getElementById('confirm-start-over').style.display = currentIsTester ? 'none' : 'block';
+
+    const lb = await apiFetch({ action: 'getLeaderboard' });
+    renderLeaderboard('confirm-lb-rows', 'confirm-lb-meta', lb);
+    showScreen('confirm');
+  } catch(e) {
+    errBanner.style.display = 'block';
+    btn.disabled = false; label.textContent = 'Submit my votes'; arrow.style.display = ''; spinner.style.display = 'none';
+  }
+}
+
+// ── Returning screen ─────────────────────────────────────────
+async function buildReturningScreen(priorVotes) {
+  document.getElementById('tester-returning-banner').style.display = currentIsTester ? 'flex' : 'none';
+  document.getElementById('returning-tester-reset').style.display = currentIsTester ? 'block' : 'none';
+  document.getElementById('returning-start-over').style.display = currentIsTester ? 'none' : 'block';
+
+  if (priorVotes) {
+    const myVoted = features.filter(f => (Number(priorVotes[f.id]) || 0) > 0)
+      .sort((a,b) => (Number(priorVotes[b.id])||0) - (Number(priorVotes[a.id])||0));
+    document.getElementById('returning-my-votes').innerHTML = renderMyVotes(myVoted, priorVotes);
+  } else {
+    document.getElementById('returning-my-votes').innerHTML = '<p style="font-size:13px;color:var(--gray-400)">Prior vote details not available.</p>';
+  }
+  try {
+    const lb = await apiFetch({ action: 'getLeaderboard' });
+    renderLeaderboard('returning-lb-rows', 'returning-lb-meta', lb);
+  } catch(e) {}
+}
+
+// ── Tester reset ──────────────────────────────────────────────
+async function testerReset() {
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = '🧪 Resetting…';
+  try {
+    await apiPost({ action: 'resetTester', email: currentEmail });
+  } catch(e) {}
+  // Reset local state and go back to vote screen fresh
+  features.forEach(f => votes[f.id] = 0);
+  buildVoteUI();
+  showScreen('vote');
+  btn.disabled = false; btn.textContent = '🧪 Testing — Start Over (resets your vote)';
+}
+
+// ── Render helpers ────────────────────────────────────────────
+function renderMyVotes(voted, voteMap) {
+  return voted.map(f => {
+    const pts = Number(voteMap[f.id]) || 0;
+    return `<div class="mv-row">
+      <div class="mv-name">${f.name}</div>
+      <div class="mv-bar-wrap"><div class="mv-bar-fill" style="width:${pts*10}%"></div></div>
+      <div class="mv-pts">${pts} pt${pts !== 1 ? 's' : ''}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderLeaderboard(rowsId, metaId, lb) {
+  if (!lb || lb.error) {
+    document.getElementById(rowsId).innerHTML = '<div class="lb-empty">Leaderboard unavailable.</div>';
+    return;
+  }
+  const { top5 = [], grandTotal = 0, totalResponses = 0 } = lb;
+  document.getElementById(metaId).textContent = `${totalResponses} response${totalResponses !== 1 ? 's' : ''} · ${grandTotal} pts cast`;
+  if (top5.length === 0 || grandTotal === 0) {
+    document.getElementById(rowsId).innerHTML = '<div class="lb-empty">No votes yet — be the first!</div>';
+    return;
+  }
+  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+  const maxPts = top5[0]?.pts || 1;
+  document.getElementById(rowsId).innerHTML = top5.map((f, i) => `
+    <div class="lb-row">
+      <div class="lb-row-top">
+        <span class="lb-medal">${medals[i]}</span>
+        <div class="lb-name">${f.name}</div>
+        <div class="lb-pts">${f.pts} pts</div>
+        <div class="lb-pct">${f.pct}%</div>
+      </div>
+      <div class="lb-track"><div class="lb-fill r${i}" style="width:${Math.round(f.pts/maxPts*100)}%"></div></div>
+    </div>`).join('');
+}
+
+// ── Start over (non-tester) ───────────────────────────────────
+function startOver() {
+  features.forEach(f => votes[f.id] = 0);
+  currentEmail = ''; currentIsTester = false;
+  document.getElementById('email-input').value = '';
+  document.getElementById('email-error').style.display = 'none';
+  showScreen('email');
+}
+
+boot();
+</script>
+</body>
+</html>
