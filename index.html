@@ -4,7 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Element451 — Feature Voting</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<meta name="description" content="Help shape the Element451 roadmap. Distribute 10 points across potential features and tell us what matters most to your institution." />
+<meta property="og:title" content="Element451 — Customer Feedback Week" />
+<meta property="og:description" content="Help shape the Element451 roadmap. You have 10 points to distribute across potential features our team is exploring." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Element451 — Customer Feedback Week" />
+<meta name="twitter:description" content="Help shape the Element451 roadmap. You have 10 points to distribute across potential features our team is exploring." />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -95,7 +102,6 @@
   }
   .tester-tab:hover { background: #FEF3C7; }
   .tester-tab:focus-visible { box-shadow: 0 0 0 3px rgba(146,64,14,0.3); outline: 2px solid var(--tester-text); outline-offset: 2px; }
-  .tester-tab.active { background: var(--tester-text); color: white; border-color: var(--tester-text); }
   .tester-tab[aria-selected="true"] { background: var(--tester-text); color: white; border-color: var(--tester-text); }
 
   /* Vote screen */
@@ -178,7 +184,7 @@
   /* Leaderboard */
   .lb-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px; padding: 1.5rem 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px; }
   .lb-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
-  .lb-title { font-size: 14px; font-weight: 600; color: var(--black); }
+  .lb-title { font-size: 14px; font-weight: 600; color: var(--black); margin: 0; }
   .lb-meta { font-size: 11px; color: var(--gray-500); }
   .lb-rows { display: flex; flex-direction: column; gap: 14px; }
   .lb-row { display: flex; flex-direction: column; gap: 5px; }
@@ -402,6 +408,7 @@ function showScreen(name, focusSelector) {
   const screen = document.getElementById('screen-' + name);
   screen.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateTitle(name);
   // Move focus to the screen for screen reader users
   requestAnimationFrame(() => {
     const target = focusSelector
@@ -667,7 +674,7 @@ function buildConfirmScreen(state) {
   const lbCard = `
     <section class="lb-card" aria-labelledby="lb-heading">
       <div class="lb-header">
-        <h2 class="lb-title" id="lb-heading">${lbTitle}</h2>
+        <h3 class="lb-title" id="lb-heading">${lbTitle}</h3>
         <div class="lb-meta" aria-label="${lbMetaText}">${lbMetaText}</div>
       </div>
       <div class="lb-rows">${lbRowsHtml}</div>
@@ -713,6 +720,17 @@ function startOver() {
   document.getElementById('email-error').style.display = 'none';
   document.getElementById('email-input').removeAttribute('aria-invalid');
   showScreen('email', '#email-input');
+}
+
+// ── Dynamic page title ───────────────────────────────────────
+function updateTitle(screen) {
+  const titles = {
+    'loading':  'Element451 — Loading',
+    'email':    'Element451 — Customer Feedback Week',
+    'vote':     'Element451 — Cast Your Votes',
+    'confirm':  'Element451 — Thank You'
+  };
+  document.title = titles[screen] || 'Element451 — Feature Voting';
 }
 
 boot();
