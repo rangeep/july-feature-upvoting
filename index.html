@@ -18,13 +18,7 @@
   html { scroll-behavior: smooth; }
   body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; display: flex; flex-direction: column; }
 
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(255,255,255,0.96); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--gray-100);
-    padding: 0 2rem; height: 60px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--gray-100); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; }
   .nav-logo svg { height: 22px; width: auto; }
   .nav-badge { font-size: 11px; font-weight: 600; padding: 4px 12px; background: var(--orange-light); color: var(--orange-dark); border-radius: 20px; border: 1px solid var(--orange-mid); letter-spacing: 0.02em; }
 
@@ -44,7 +38,8 @@
   .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
   h1 { font-size: 40px; font-weight: 600; line-height: 1.08; letter-spacing: -0.03em; color: var(--black); margin-bottom: 1rem; }
   h1 span { color: var(--orange); }
-  .hero-sub { font-size: 16px; line-height: 1.7; color: var(--gray-500); margin-bottom: 2.5rem; max-width: 500px; }
+  .hero-sub { font-size: 15px; line-height: 1.75; color: var(--gray-500); margin-bottom: 2.5rem; max-width: 520px; }
+  .hero-sub p + p { margin-top: 0.75rem; }
 
   .card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px; padding: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
   .field-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px; }
@@ -63,11 +58,20 @@
   .tester-banner { background: var(--tester-bg); border: 1px solid var(--tester-border); border-radius: 12px; padding: 10px 14px; margin-bottom: 1.5rem; font-size: 12px; color: var(--tester-text); display: flex; align-items: center; gap: 8px; }
   .tester-banner strong { font-weight: 600; }
 
+  /* Tester state simulator */
+  .tester-sim { background: var(--tester-bg); border: 1px solid var(--tester-border); border-radius: 12px; padding: 14px 16px; margin-bottom: 1.25rem; }
+  .tester-sim-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tester-text); margin-bottom: 10px; }
+  .tester-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tester-tab { padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--tester-border); background: white; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; color: var(--tester-text); cursor: pointer; transition: all 0.15s; }
+  .tester-tab:hover { background: #FEF3C7; }
+  .tester-tab.active { background: var(--tester-text); color: white; border-color: var(--tester-text); }
+
   /* Vote screen */
   .vote-header { margin-bottom: 2rem; }
   .vote-header h2 { font-size: 30px; font-weight: 600; letter-spacing: -0.025em; color: var(--black); margin-bottom: 0.5rem; line-height: 1.2; }
   .vote-header h2 span { color: var(--orange); }
-  .vote-header p { font-size: 15px; color: var(--gray-500); line-height: 1.65; }
+  .vote-header-sub { font-size: 15px; color: var(--gray-500); line-height: 1.7; }
+  .vote-header-sub p + p { margin-top: 0.75rem; }
 
   .budget-strip { position: sticky; top: 60px; z-index: 50; background: rgba(248,248,248,0.96); backdrop-filter: blur(8px); padding: 12px 0; margin-bottom: 1.5rem; }
   .budget-inner { background: var(--white); border: 1px solid var(--gray-100); border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
@@ -106,6 +110,7 @@
   /* Result cards */
   .result-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px; padding: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px; }
   .confirm-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--orange-light); border: 1px solid var(--orange-mid); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
+  .missed-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--gray-100); border: 1px solid var(--gray-300); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 22px; }
   .result-card h2 { font-size: 26px; font-weight: 600; letter-spacing: -0.025em; margin-bottom: 0.4rem; }
   .result-card > p { font-size: 14px; color: var(--gray-500); line-height: 1.65; margin-bottom: 1.25rem; }
   .section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-300); margin-bottom: 10px; }
@@ -137,8 +142,12 @@
   .lb-fill.r3 { background: #FFA87A; }
   .lb-fill.r4 { background: #FFB899; }
   .lb-empty { font-size: 13px; color: var(--gray-300); text-align: center; padding: 1rem 0; }
+  .lb-appreciation { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--gray-100); font-size: 13px; color: var(--gray-500); line-height: 1.65; }
+  .lb-appreciation strong { color: var(--gray-900); font-weight: 500; }
 
-  /* Buttons */
+  /* Closed / expired state */
+  .closed-pill { display: inline-flex; align-items: center; gap: 6px; background: #FFF1F0; border: 1px solid #FECACA; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600; color: #C0392B; margin-bottom: 1.25rem; }
+
   .start-over { display: block; text-align: center; margin-top: 0.5rem; font-size: 13px; color: var(--gray-300); background: none; border: none; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-family: 'Inter', sans-serif; padding: 4px; }
   .start-over:hover { color: var(--gray-500); }
   .btn-tester-reset { display: block; width: 100%; margin-top: 10px; height: 44px; background: var(--tester-bg); color: var(--tester-text); border: 1.5px solid var(--tester-border); border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
@@ -151,6 +160,8 @@
     .container { padding: 2rem 1rem 3rem; }
     .budget-dots { display: none; }
     nav { padding: 0 1rem; }
+    .tester-tabs { gap: 4px; }
+    .tester-tab { font-size: 11px; padding: 5px 10px; }
   }
 </style>
 </head>
@@ -192,7 +203,11 @@
     <div id="screen-email" class="screen">
       <div class="eyebrow"><span class="eyebrow-dot"></span>Customer input</div>
       <h1>Help us build what <span>matters</span> to you</h1>
-      <p class="hero-sub">You have 10 points to distribute across features our product team is considering. Your input directly shapes our 2026 roadmap.</p>
+      <div class="hero-sub">
+        <p>Welcome to Customer Feedback Week! 👋</p>
+        <p>This is your opportunity to help shape what's next in Element451. You'll have 10 points to distribute across potential features our team is exploring. Vote for the enhancements that would have the biggest impact on your institution—your input helps shape our future roadmap and influences what we build over the next 6–12 months.</p>
+        <p>You'll have until July 25 at midnight PDT to submit your responses.</p>
+      </div>
       <div class="card">
         <label class="field-label" for="email-input">Your work email</label>
         <div class="email-row">
@@ -220,9 +235,13 @@
         🧪 <span><strong>Testing mode</strong> — your vote will be flagged as a test response</span>
       </div>
       <div class="vote-header">
-        <div class="eyebrow"><span class="eyebrow-dot"></span>10 points to allocate</div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Welcome to Customer Feedback Week! 👋</div>
         <h2>Which features should we build <span>first?</span></h2>
-        <p>Use + and − to give points to the features that matter most. Concentrate everything on one or spread them around.</p>
+        <div class="vote-header-sub">
+          <p>This is your opportunity to help shape what's next in Element451. You'll have 10 points to distribute across potential features our team is exploring. Vote for the enhancements that would have the biggest impact on your institution—your input helps shape our future roadmap and influences what we build over the next 6–12 months.</p>
+          <p>You'll have until July 25 at midnight PDT to submit your responses.</p>
+          <p style="margin-top:0.75rem;">Use + and − to give points to the features that matter most. Concentrate everything on one or spread them around.</p>
+        </div>
       </div>
       <div class="budget-strip">
         <div class="budget-inner">
@@ -245,56 +264,28 @@
       </div>
     </div>
 
-    <!-- CONFIRM -->
+    <!-- CONFIRM / RETURNING / EXPIRED — all rendered into this single screen -->
     <div id="screen-confirm" class="screen">
-      <div id="tester-confirm-banner" class="tester-banner" style="display:none">
-        🧪 <span><strong>Test response recorded.</strong> This vote is flagged in the Responses tab.</span>
-      </div>
-      <div class="result-card">
-        <div class="confirm-icon">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4.5 11l5 5 8-9" stroke="#FE5000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <h2>Thanks for your input!</h2>
-        <p>Your votes are recorded. Here's how you distributed your 10 points.</p>
-        <div class="section-label">Your allocation</div>
-        <div class="my-votes" id="confirm-my-votes"></div>
-        <div class="result-footer">We'll use this feedback when planning our 2026 roadmap. Keep an eye on your inbox for product updates.</div>
-      </div>
-      <div class="lb-card">
-        <div class="lb-header">
-          <div class="lb-title">🏆 Current top 5</div>
-          <div class="lb-meta" id="confirm-lb-meta"></div>
-        </div>
-        <div class="lb-rows" id="confirm-lb-rows"></div>
-      </div>
-      <button class="start-over" id="confirm-start-over" onclick="startOver()">↩ Start over</button>
-      <button class="btn-tester-reset" id="confirm-tester-reset" style="display:none" onclick="testerReset()">🧪 Testing — Start Over (resets your vote)</button>
-    </div>
 
-    <!-- RETURNING -->
-    <div id="screen-returning" class="screen">
-      <div id="tester-returning-banner" class="tester-banner" style="display:none">
-        🧪 <span><strong>Testing mode</strong> — use the reset button below to vote again</span>
-      </div>
-      <div class="eyebrow"><span class="eyebrow-dot"></span>Welcome back</div>
-      <h1>You've already <span>voted</span></h1>
-      <p class="hero-sub" style="margin-bottom:1.5rem;">Here's a recap of your submission and how the community is voting right now.</p>
-      <div class="result-card">
-        <h2>Your votes</h2>
-        <p>How you distributed your 10 points.</p>
-        <div class="section-label">Your allocation</div>
-        <div class="my-votes" id="returning-my-votes"></div>
-      </div>
-      <div class="lb-card">
-        <div class="lb-header">
-          <div class="lb-title">🏆 Current top 5</div>
-          <div class="lb-meta" id="returning-lb-meta"></div>
+      <!-- Tester simulator (testers only) -->
+      <div id="tester-sim-wrap" style="display:none">
+        <div class="tester-sim">
+          <div class="tester-sim-label">🧪 Simulate end state</div>
+          <div class="tester-tabs">
+            <button class="tester-tab active" onclick="simState('voted-open')">✅ Voted (open)</button>
+            <button class="tester-tab" onclick="simState('returning-open')">🔁 Returning (open)</button>
+            <button class="tester-tab" onclick="simState('expired-voted')">🔒 Expired + voted</button>
+            <button class="tester-tab" onclick="simState('expired-missed')">🔒 Expired + missed</button>
+          </div>
         </div>
-        <div class="lb-rows" id="returning-lb-rows"></div>
-        <div class="result-footer" style="margin-top:1.25rem;">Voting closes when we've heard from all invited customers. Results will be shared with the community.</div>
       </div>
-      <button class="start-over" id="returning-start-over" onclick="startOver()">↩ Start over</button>
-      <button class="btn-tester-reset" id="returning-tester-reset" style="display:none" onclick="testerReset()">🧪 Testing — Start Over (resets your vote)</button>
+
+      <!-- Dynamic content rendered here -->
+      <div id="confirm-content"></div>
+
+      <!-- Tester reset button -->
+      <button class="btn-tester-reset" id="confirm-tester-reset" style="display:none" onclick="testerReset()">🧪 Testing — Start Over (resets your vote)</button>
+      <button class="start-over" id="confirm-start-over" style="display:none" onclick="startOver()">↩ Start over</button>
     </div>
 
   </div>
@@ -306,10 +297,20 @@
 const API = "https://script.google.com/macros/s/AKfycbwzINhUnJeOp--AP30tyAfgNuFR9ec7Q97fjdKlB3bH_apaxVj7eM7O1xGW_x9OT4s/exec";
 const TOTAL = 10;
 
+// Deadline: July 26 2026 07:00 UTC = July 25 midnight PDT
+const DEADLINE = new Date('2026-07-26T07:00:00Z');
+
 let features = [];
 let votes = {};
 let currentEmail = "";
 let currentIsTester = false;
+let currentPriorVotes = null;
+let currentHasVoted = false;
+let cachedLeaderboard = null;
+
+function isPastDeadline() {
+  return new Date() > DEADLINE;
+}
 
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -360,9 +361,19 @@ async function checkEmail() {
     } else {
       currentEmail = val;
       currentIsTester = data.isTester === true;
-      if (data.hasVoted) {
-        await buildReturningScreen(data.priorVotes);
-        showScreen('returning');
+      currentHasVoted = data.hasVoted === true;
+      currentPriorVotes = data.priorVotes || null;
+
+      // Pre-fetch leaderboard
+      try { cachedLeaderboard = await apiFetch({ action: 'getLeaderboard' }); } catch(e) {}
+
+      if (isPastDeadline()) {
+        // Post-deadline: skip voting, go straight to confirm screen
+        buildConfirmScreen(currentHasVoted ? 'expired-voted' : 'expired-missed');
+        showScreen('confirm');
+      } else if (data.hasVoted) {
+        buildConfirmScreen('returning-open');
+        showScreen('confirm');
       } else {
         buildVoteUI();
         showScreen('vote');
@@ -380,9 +391,7 @@ document.getElementById('email-input').addEventListener('keydown', e => { if(e.k
 
 // ── Vote UI ───────────────────────────────────────────────────
 function buildVoteUI() {
-  // Show/hide tester banner
   document.getElementById('tester-vote-banner').style.display = currentIsTester ? 'flex' : 'none';
-
   const list = document.getElementById('feature-list');
   list.innerHTML = '';
   features.forEach((f, i) => {
@@ -449,16 +458,10 @@ async function submitVotes() {
   try {
     const result = await apiPost({ action: 'submitVotes', email: currentEmail, votes, isTester: currentIsTester });
     if (result.error) throw new Error(result.error);
-
-    // Build confirm screen
-    const myVoted = features.filter(f => votes[f.id] > 0).sort((a,b) => votes[b.id]-votes[a.id]);
-    document.getElementById('confirm-my-votes').innerHTML = renderMyVotes(myVoted, votes);
-    document.getElementById('tester-confirm-banner').style.display = currentIsTester ? 'flex' : 'none';
-    document.getElementById('confirm-tester-reset').style.display = currentIsTester ? 'block' : 'none';
-    document.getElementById('confirm-start-over').style.display = currentIsTester ? 'none' : 'block';
-
-    const lb = await apiFetch({ action: 'getLeaderboard' });
-    renderLeaderboard('confirm-lb-rows', 'confirm-lb-meta', lb);
+    currentHasVoted = true;
+    currentPriorVotes = {...votes};
+    try { cachedLeaderboard = await apiFetch({ action: 'getLeaderboard' }); } catch(e) {}
+    buildConfirmScreen('voted-open');
     showScreen('confirm');
   } catch(e) {
     errBanner.style.display = 'block';
@@ -466,34 +469,116 @@ async function submitVotes() {
   }
 }
 
-// ── Returning screen ─────────────────────────────────────────
-async function buildReturningScreen(priorVotes) {
-  document.getElementById('tester-returning-banner').style.display = currentIsTester ? 'flex' : 'none';
-  document.getElementById('returning-tester-reset').style.display = currentIsTester ? 'block' : 'none';
-  document.getElementById('returning-start-over').style.display = currentIsTester ? 'none' : 'block';
+// ── Build confirm screen ──────────────────────────────────────
+function buildConfirmScreen(state) {
+  // Show tester sim UI
+  document.getElementById('tester-sim-wrap').style.display = currentIsTester ? 'block' : 'none';
+  document.getElementById('confirm-tester-reset').style.display = currentIsTester ? 'block' : 'none';
+  document.getElementById('confirm-start-over').style.display = currentIsTester ? 'none' : 'block';
 
-  if (priorVotes) {
-    const myVoted = features.filter(f => (Number(priorVotes[f.id]) || 0) > 0)
-      .sort((a,b) => (Number(priorVotes[b.id])||0) - (Number(priorVotes[a.id])||0));
-    document.getElementById('returning-my-votes').innerHTML = renderMyVotes(myVoted, priorVotes);
-  } else {
-    document.getElementById('returning-my-votes').innerHTML = '<p style="font-size:13px;color:var(--gray-400)">Prior vote details not available.</p>';
+  // Update active tab
+  document.querySelectorAll('.tester-tab').forEach(t => t.classList.remove('active'));
+  const tabMap = {'voted-open':0,'returning-open':1,'expired-voted':2,'expired-missed':3};
+  const tabs = document.querySelectorAll('.tester-tab');
+  if (tabs[tabMap[state]]) tabs[tabMap[state]].classList.add('active');
+
+  const isExpired = state.startsWith('expired');
+  const hasVotes = state === 'voted-open' || state === 'returning-open' || state === 'expired-voted';
+  const isReturning = state === 'returning-open';
+
+  let topCard = '';
+
+  if (isExpired && !hasVotes) {
+    // Expired + didn't vote
+    topCard = `
+      <div class="result-card">
+        <div class="missed-icon">😔</div>
+        <div class="closed-pill">⏰ Voting is now closed</div>
+        <h2>We're sorry we missed you this time</h2>
+        <p>Customer Feedback Week has closed, and we weren't able to capture your input for this round. We truly value your perspective and hope you'll join us next time—your voice matters in shaping the future of Element451.</p>
+        <p style="font-size:14px;color:var(--gray-500);line-height:1.65;margin-top:0.75rem;">Keep an eye on your inbox for future feedback opportunities and updates on the features we're building based on this round of input.</p>
+      </div>`;
+  } else if (hasVotes) {
+    const voteData = isReturning || (isExpired && hasVotes) ? currentPriorVotes : votes;
+    const voted = features.filter(f => (Number(voteData?.[f.id]) || 0) > 0)
+      .sort((a,b) => (Number(voteData[b.id])||0) - (Number(voteData[a.id])||0));
+    const myVotesHtml = voted.length > 0 ? renderMyVotes(voted, voteData)
+      : '<p style="font-size:13px;color:var(--gray-400)">Vote details not available.</p>';
+
+    const headingText = isExpired ? 'Thank you for your participation!' : (isReturning ? 'You\'ve already voted' : 'Thanks for your input!');
+    const subText = isExpired
+      ? 'Voting has now closed. Here\'s a recap of how you distributed your 10 points.'
+      : (isReturning ? 'Here\'s a recap of how you distributed your 10 points.' : 'Your votes are recorded. Here\'s how you distributed your 10 points.');
+
+    topCard = `
+      <div class="result-card">
+        ${isExpired ? '<div class="closed-pill">⏰ Voting is now closed</div>' : ''}
+        <div class="confirm-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4.5 11l5 5 8-9" stroke="#FE5000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2>${headingText}</h2>
+        <p>${subText}</p>
+        <div class="section-label">Your allocation</div>
+        <div class="my-votes">${myVotesHtml}</div>
+        <div class="result-footer">We'll use this feedback when planning our roadmap. Keep an eye on your inbox for product updates and announcements.</div>
+      </div>`;
   }
-  try {
-    const lb = await apiFetch({ action: 'getLeaderboard' });
-    renderLeaderboard('returning-lb-rows', 'returning-lb-meta', lb);
-  } catch(e) {}
+
+  // Leaderboard card
+  const lb = cachedLeaderboard;
+  const lbTitle = isExpired ? '🏆 Final top 5' : '🏆 Current top 5';
+  let lbRowsHtml = '';
+  let lbMetaText = '';
+
+  if (!lb || lb.error || !lb.top5 || lb.grandTotal === 0) {
+    lbRowsHtml = '<div class="lb-empty">No votes recorded yet.</div>';
+  } else {
+    const { top5, grandTotal, totalResponses } = lb;
+    lbMetaText = `${totalResponses} response${totalResponses !== 1 ? 's' : ''} · ${grandTotal} pts cast`;
+    const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+    const maxPts = top5[0]?.pts || 1;
+    lbRowsHtml = top5.map((f, i) => `
+      <div class="lb-row">
+        <div class="lb-row-top">
+          <span class="lb-medal">${medals[i]}</span>
+          <div class="lb-name">${f.name}</div>
+          <div class="lb-pts">${f.pts} pts</div>
+          <div class="lb-pct">${f.pct}%</div>
+        </div>
+        <div class="lb-track"><div class="lb-fill r${i}" style="width:${Math.round(f.pts/maxPts*100)}%"></div></div>
+      </div>`).join('');
+  }
+
+  const appreciationNote = `
+    <div class="lb-appreciation">
+      <strong>We appreciate the community's feedback and are reviewing it closely.</strong> Remember, this is one important signal — alongside many others — that we'll use to influence our roadmap over the next 6–12 months. Thank you for taking the time to share your perspective.
+    </div>`;
+
+  const lbCard = `
+    <div class="lb-card">
+      <div class="lb-header">
+        <div class="lb-title">${lbTitle}</div>
+        <div class="lb-meta">${lbMetaText}</div>
+      </div>
+      <div class="lb-rows">${lbRowsHtml}</div>
+      ${appreciationNote}
+    </div>`;
+
+  document.getElementById('confirm-content').innerHTML = topCard + lbCard;
+}
+
+// ── Tester state simulator ────────────────────────────────────
+function simState(state) {
+  buildConfirmScreen(state);
 }
 
 // ── Tester reset ──────────────────────────────────────────────
 async function testerReset() {
-  const btn = event.target;
+  const btn = document.getElementById('confirm-tester-reset');
   btn.disabled = true; btn.textContent = '🧪 Resetting…';
-  try {
-    await apiPost({ action: 'resetTester', email: currentEmail });
-  } catch(e) {}
-  // Reset local state and go back to vote screen fresh
+  try { await apiPost({ action: 'resetTester', email: currentEmail }); } catch(e) {}
   features.forEach(f => votes[f.id] = 0);
+  currentHasVoted = false; currentPriorVotes = null;
   buildVoteUI();
   showScreen('vote');
   btn.disabled = false; btn.textContent = '🧪 Testing — Start Over (resets your vote)';
@@ -511,35 +596,10 @@ function renderMyVotes(voted, voteMap) {
   }).join('');
 }
 
-function renderLeaderboard(rowsId, metaId, lb) {
-  if (!lb || lb.error) {
-    document.getElementById(rowsId).innerHTML = '<div class="lb-empty">Leaderboard unavailable.</div>';
-    return;
-  }
-  const { top5 = [], grandTotal = 0, totalResponses = 0 } = lb;
-  document.getElementById(metaId).textContent = `${totalResponses} response${totalResponses !== 1 ? 's' : ''} · ${grandTotal} pts cast`;
-  if (top5.length === 0 || grandTotal === 0) {
-    document.getElementById(rowsId).innerHTML = '<div class="lb-empty">No votes yet — be the first!</div>';
-    return;
-  }
-  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
-  const maxPts = top5[0]?.pts || 1;
-  document.getElementById(rowsId).innerHTML = top5.map((f, i) => `
-    <div class="lb-row">
-      <div class="lb-row-top">
-        <span class="lb-medal">${medals[i]}</span>
-        <div class="lb-name">${f.name}</div>
-        <div class="lb-pts">${f.pts} pts</div>
-        <div class="lb-pct">${f.pct}%</div>
-      </div>
-      <div class="lb-track"><div class="lb-fill r${i}" style="width:${Math.round(f.pts/maxPts*100)}%"></div></div>
-    </div>`).join('');
-}
-
-// ── Start over (non-tester) ───────────────────────────────────
+// ── Start over ────────────────────────────────────────────────
 function startOver() {
   features.forEach(f => votes[f.id] = 0);
-  currentEmail = ''; currentIsTester = false;
+  currentEmail = ''; currentIsTester = false; currentHasVoted = false; currentPriorVotes = null;
   document.getElementById('email-input').value = '';
   document.getElementById('email-error').style.display = 'none';
   showScreen('email');
