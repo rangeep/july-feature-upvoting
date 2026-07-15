@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" /> 
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Element451 — Feature Voting</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -11,12 +11,17 @@
     --orange: #FE5000; --orange-dark: #D94200;
     --orange-light: #FFF0EB; --orange-mid: #FFD0BC;
     --black: #0A0A0A; --gray-900: #1C1C1C;
-    --gray-500: #6B6B6B; --gray-400: #9B9B9B; --gray-300: #C4C4C4;
+    --gray-500: #6B6B6B; --gray-400: #9B9B9B;
     --gray-100: #F2F2F2; --gray-50: #F8F8F8; --white: #FFFFFF;
     --tester-bg: #FFFBEB; --tester-border: #FDE68A; --tester-text: #92400E;
+    --focus-ring: 0 0 0 3px rgba(254,80,0,0.4);
   }
   html { scroll-behavior: smooth; }
   body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* Skip link */
+  .skip-link { position: absolute; top: -100px; left: 1rem; z-index: 9999; background: var(--black); color: white; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: top 0.15s; }
+  .skip-link:focus { top: 1rem; }
 
   nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--gray-100); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; }
   .nav-logo svg { height: 22px; width: auto; }
@@ -29,42 +34,69 @@
   .screen.active { display: block; animation: fadeUp 0.3s ease both; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
+  /* Loading */
   .loading-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; }
   .spinner { width: 36px; height: 36px; border: 3px solid var(--gray-100); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { font-size: 14px; color: var(--gray-400); }
+  .loading-text { font-size: 14px; color: var(--gray-500); }
 
+  /* Typography */
   .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 1.25rem; }
-  .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+  .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
   h1 { font-size: 40px; font-weight: 600; line-height: 1.08; letter-spacing: -0.03em; color: var(--black); margin-bottom: 1rem; }
   h1 span { color: var(--orange); }
   .hero-sub { font-size: 15px; line-height: 1.75; color: var(--gray-500); margin-bottom: 2.5rem; max-width: 520px; }
   .hero-sub p + p { margin-top: 0.75rem; }
 
+  /* Email card */
   .card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px; padding: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-  .field-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px; }
+  .field-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 8px; }
   .email-row { display: flex; gap: 10px; }
-  .email-row input { flex: 1; height: 46px; padding: 0 14px; border: 1.5px solid #E0E0E0; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 15px; background: var(--gray-50); color: var(--gray-900); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
-  .email-row input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(254,80,0,0.1); background: var(--white); }
-  .btn-primary { height: 46px; padding: 0 22px; background: var(--orange); color: white; border: none; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 7px; transition: background 0.15s, transform 0.1s; }
+  .email-row input {
+    flex: 1; height: 46px; padding: 0 14px;
+    border: 1.5px solid #D0D0D0; border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 15px;
+    background: var(--gray-50); color: var(--gray-900);
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .email-row input:focus { border-color: var(--orange); box-shadow: var(--focus-ring); background: var(--white); }
+  .email-row input:focus-visible { border-color: var(--orange); box-shadow: var(--focus-ring); background: var(--white); }
+
+  /* Buttons — bumped to 19px bold for 3:1 large text threshold on brand orange */
+  .btn-primary {
+    height: 46px; padding: 0 22px; background: var(--orange); color: white;
+    border: none; border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 19px; font-weight: 700;
+    cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 7px;
+    transition: background 0.15s, transform 0.1s; outline: none;
+  }
   .btn-primary:hover:not(:disabled) { background: var(--orange-dark); }
+  .btn-primary:focus-visible { box-shadow: var(--focus-ring); outline: 2px solid var(--orange); outline-offset: 2px; }
   .btn-primary:active:not(:disabled) { transform: scale(0.98); }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
   .inline-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+
   .email-error { margin-top: 10px; font-size: 13px; color: #C0392B; display: none; align-items: center; gap: 6px; }
-  .trust-line { margin-top: 14px; font-size: 12px; color: var(--gray-300); display: flex; align-items: center; gap: 6px; }
+  .trust-line { margin-top: 14px; font-size: 12px; color: var(--gray-500); display: flex; align-items: center; gap: 6px; }
 
   /* Tester banner */
   .tester-banner { background: var(--tester-bg); border: 1px solid var(--tester-border); border-radius: 12px; padding: 10px 14px; margin-bottom: 1.5rem; font-size: 12px; color: var(--tester-text); display: flex; align-items: center; gap: 8px; }
   .tester-banner strong { font-weight: 600; }
 
-  /* Tester state simulator */
+  /* Tester simulator */
   .tester-sim { background: var(--tester-bg); border: 1px solid var(--tester-border); border-radius: 12px; padding: 14px 16px; margin-bottom: 1.25rem; }
-  .tester-sim-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tester-text); margin-bottom: 10px; }
+  .tester-sim-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tester-text); margin-bottom: 10px; }
   .tester-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tester-tab { padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--tester-border); background: white; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; color: var(--tester-text); cursor: pointer; transition: all 0.15s; }
+  .tester-tab {
+    padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--tester-border);
+    background: white; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+    color: var(--tester-text); cursor: pointer; transition: all 0.15s; outline: none;
+  }
   .tester-tab:hover { background: #FEF3C7; }
+  .tester-tab:focus-visible { box-shadow: 0 0 0 3px rgba(146,64,14,0.3); outline: 2px solid var(--tester-text); outline-offset: 2px; }
   .tester-tab.active { background: var(--tester-text); color: white; border-color: var(--tester-text); }
+  .tester-tab[aria-selected="true"] { background: var(--tester-text); color: white; border-color: var(--tester-text); }
 
   /* Vote screen */
   .vote-header { margin-bottom: 2rem; }
@@ -73,67 +105,88 @@
   .vote-header-sub { font-size: 15px; color: var(--gray-500); line-height: 1.7; }
   .vote-header-sub p + p { margin-top: 0.75rem; }
 
+  /* Budget strip */
   .budget-strip { position: sticky; top: 60px; z-index: 50; background: rgba(248,248,248,0.96); backdrop-filter: blur(8px); padding: 12px 0; margin-bottom: 1.5rem; }
   .budget-inner { background: var(--white); border: 1px solid var(--gray-100); border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-  .budget-left-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-300); margin-bottom: 3px; }
+  .budget-left-label { font-size: 11px; font-weight: 600; color: var(--gray-500); margin-bottom: 3px; }
   .budget-number { font-size: 30px; font-weight: 600; letter-spacing: -0.03em; color: var(--black); line-height: 1; transition: color 0.2s; }
   .budget-number.zero { color: var(--orange); }
   .budget-dots { display: flex; gap: 5px; align-items: center; }
   .bdot { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--gray-100); background: var(--gray-50); transition: background 0.2s, border-color 0.2s, transform 0.15s; }
   .bdot.used { background: var(--orange); border-color: var(--orange); transform: scale(1.08); }
 
+  /* Feature cards */
   .feature-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 2rem; }
   .fcard { background: var(--white); border: 1.5px solid var(--gray-100); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; transition: border-color 0.2s, box-shadow 0.2s; }
   .fcard.on { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(254,80,0,0.07); }
-  .fcard-num { font-size: 10px; font-weight: 700; color: var(--gray-300); min-width: 18px; text-align: center; flex-shrink: 0; }
+  .fcard-num { font-size: 11px; font-weight: 700; color: var(--gray-500); min-width: 18px; text-align: center; flex-shrink: 0; }
   .fcard.on .fcard-num { color: var(--orange); }
   .fcard-body { flex: 1; min-width: 0; }
   .fcard-name { font-size: 14px; font-weight: 500; color: var(--black); margin-bottom: 2px; letter-spacing: -0.01em; }
   .fcard-desc { font-size: 12px; color: var(--gray-500); line-height: 1.4; }
+
+  /* Stepper */
   .stepper { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-  .sbtn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--gray-100); background: var(--gray-50); color: var(--gray-900); font-size: 17px; cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; transition: background 0.1s, border-color 0.1s, transform 0.1s; font-family: 'Inter', sans-serif; }
-  .sbtn:hover:not(:disabled) { background: var(--gray-100); border-color: var(--gray-300); }
+  .sbtn {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1.5px solid var(--gray-100); background: var(--gray-50);
+    color: var(--gray-900); font-size: 18px; cursor: pointer; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.1s, border-color 0.1s, transform 0.1s;
+    font-family: 'Inter', sans-serif; outline: none;
+  }
+  .sbtn:hover:not(:disabled) { background: var(--gray-100); border-color: var(--gray-400); }
+  .sbtn:focus-visible { box-shadow: var(--focus-ring); outline: 2px solid var(--orange); outline-offset: 2px; }
   .sbtn:active:not(:disabled) { transform: scale(0.9); }
   .sbtn:disabled { opacity: 0.2; cursor: not-allowed; }
   .sval { font-size: 15px; font-weight: 600; min-width: 20px; text-align: center; color: var(--black); font-variant-numeric: tabular-nums; }
   .sval.on { color: var(--orange); }
 
+  /* Submit */
   .submit-area { text-align: center; }
-  .btn-submit { width: 100%; height: 52px; background: var(--orange); color: white; border: none; border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; transition: background 0.15s, transform 0.1s, opacity 0.2s; }
+  .btn-submit {
+    width: 100%; height: 52px; background: var(--orange); color: white;
+    border: none; border-radius: 12px;
+    font-family: 'Inter', sans-serif; font-size: 19px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 10px; transition: background 0.15s, transform 0.1s, opacity 0.2s;
+    outline: none;
+  }
   .btn-submit:hover:not(:disabled) { background: var(--orange-dark); }
+  .btn-submit:focus-visible { box-shadow: var(--focus-ring); outline: 2px solid var(--orange); outline-offset: 2px; }
   .btn-submit:active:not(:disabled) { transform: scale(0.99); }
   .btn-submit:disabled { opacity: 0.3; cursor: not-allowed; }
-  .submit-hint { font-size: 13px; color: var(--gray-300); }
+  .submit-hint { font-size: 13px; color: var(--gray-500); }
   .submit-hint.ready { color: var(--orange); font-weight: 500; }
   .error-banner { background: #FFF5F5; border: 1px solid #FED7D7; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #C53030; margin-top: 10px; display: none; }
 
   /* Result cards */
   .result-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px; padding: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px; }
   .confirm-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--orange-light); border: 1px solid var(--orange-mid); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
-  .missed-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--gray-100); border: 1px solid var(--gray-300); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 22px; }
+  .missed-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--gray-100); border: 1px solid #D0D0D0; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 22px; }
   .result-card h2 { font-size: 26px; font-weight: 600; letter-spacing: -0.025em; margin-bottom: 0.4rem; }
-  .result-card > p { font-size: 14px; color: var(--gray-500); line-height: 1.65; margin-bottom: 1.25rem; }
-  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-300); margin-bottom: 10px; }
+  .result-card > p, .result-card .card-sub { font-size: 14px; color: var(--gray-500); line-height: 1.65; margin-bottom: 1.25rem; }
+  .section-heading { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 10px; }
   .my-votes { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
   .mv-row { display: flex; align-items: center; gap: 10px; }
   .mv-name { font-size: 13px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--gray-900); }
   .mv-bar-wrap { width: 80px; height: 4px; background: var(--gray-100); border-radius: 2px; overflow: hidden; }
   .mv-bar-fill { height: 100%; background: var(--orange); border-radius: 2px; }
   .mv-pts { font-size: 12px; font-weight: 600; color: var(--orange); min-width: 36px; text-align: right; }
-  .result-footer { font-size: 12px; color: var(--gray-300); border-top: 1px solid var(--gray-100); padding-top: 1.25rem; line-height: 1.65; }
+  .result-footer { font-size: 12px; color: var(--gray-500); border-top: 1px solid var(--gray-100); padding-top: 1.25rem; line-height: 1.65; }
 
   /* Leaderboard */
   .lb-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px; padding: 1.5rem 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px; }
   .lb-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
   .lb-title { font-size: 14px; font-weight: 600; color: var(--black); }
-  .lb-meta { font-size: 11px; color: var(--gray-300); }
+  .lb-meta { font-size: 11px; color: var(--gray-500); }
   .lb-rows { display: flex; flex-direction: column; gap: 14px; }
   .lb-row { display: flex; flex-direction: column; gap: 5px; }
   .lb-row-top { display: flex; align-items: center; gap: 8px; }
   .lb-medal { font-size: 15px; flex-shrink: 0; width: 22px; }
   .lb-name { font-size: 13px; font-weight: 500; color: var(--black); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .lb-pts { font-size: 13px; font-weight: 600; color: var(--gray-900); font-variant-numeric: tabular-nums; flex-shrink: 0; }
-  .lb-pct { font-size: 11px; color: var(--gray-300); min-width: 36px; text-align: right; flex-shrink: 0; }
+  .lb-pct { font-size: 11px; color: var(--gray-500); min-width: 36px; text-align: right; flex-shrink: 0; }
   .lb-track { height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
   .lb-fill { height: 100%; border-radius: 3px; transition: width 0.7s ease 0.1s; }
   .lb-fill.r0 { background: var(--orange); }
@@ -141,19 +194,34 @@
   .lb-fill.r2 { background: #FF8C5A; }
   .lb-fill.r3 { background: #FFA87A; }
   .lb-fill.r4 { background: #FFB899; }
-  .lb-empty { font-size: 13px; color: var(--gray-300); text-align: center; padding: 1rem 0; }
+  .lb-empty { font-size: 13px; color: var(--gray-500); text-align: center; padding: 1rem 0; }
   .lb-appreciation { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--gray-100); font-size: 13px; color: var(--gray-500); line-height: 1.65; }
   .lb-appreciation strong { color: var(--gray-900); font-weight: 500; }
 
-  /* Closed / expired state */
+  /* Closed state */
   .closed-pill { display: inline-flex; align-items: center; gap: 6px; background: #FFF1F0; border: 1px solid #FECACA; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600; color: #C0392B; margin-bottom: 1.25rem; }
 
-  .start-over { display: block; text-align: center; margin-top: 0.5rem; font-size: 13px; color: var(--gray-300); background: none; border: none; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-family: 'Inter', sans-serif; padding: 4px; }
-  .start-over:hover { color: var(--gray-500); }
-  .btn-tester-reset { display: block; width: 100%; margin-top: 10px; height: 44px; background: var(--tester-bg); color: var(--tester-text); border: 1.5px solid var(--tester-border); border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
-  .btn-tester-reset:hover { background: #FEF3C7; }
+  /* Utility buttons */
+  .start-over {
+    display: block; text-align: center; margin-top: 0.5rem;
+    font-size: 14px; color: var(--gray-500); background: none; border: none;
+    cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
+    font-family: 'Inter', sans-serif; padding: 6px; outline: none;
+  }
+  .start-over:hover { color: var(--gray-900); }
+  .start-over:focus-visible { box-shadow: var(--focus-ring); border-radius: 4px; outline: 2px solid var(--orange); outline-offset: 2px; }
 
-  footer { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--gray-300); border-top: 1px solid var(--gray-100); }
+  .btn-tester-reset {
+    display: block; width: 100%; margin-top: 10px; height: 44px;
+    background: var(--tester-bg); color: var(--tester-text);
+    border: 1.5px solid var(--tester-border); border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: background 0.15s; outline: none;
+  }
+  .btn-tester-reset:hover { background: #FEF3C7; }
+  .btn-tester-reset:focus-visible { box-shadow: 0 0 0 3px rgba(146,64,14,0.3); outline: 2px solid var(--tester-text); outline-offset: 2px; }
+
+  footer { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--gray-500); border-top: 1px solid var(--gray-100); }
 
   @media (max-width: 480px) {
     h1 { font-size: 30px; }
@@ -163,11 +231,17 @@
     .tester-tabs { gap: 4px; }
     .tester-tab { font-size: 11px; padding: 5px 10px; }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
 </style>
 </head>
 <body>
 
-<nav>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<nav aria-label="Site navigation">
   <div class="nav-logo">
     <svg viewBox="0 0 232 56" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Element451">
       <path d="M71.5838 9.34477H68.3767V7.32923H74.2229L74.0946 26.7151H76.7336V28.7489H69.0914V26.7151H71.4555L71.5838 9.34477Z" fill="#F36D38"/>
@@ -188,20 +262,20 @@
   <span class="nav-badge">Roadmap Voting July 2026</span>
 </nav>
 
-<main>
+<main id="main-content">
   <div class="container">
 
     <!-- LOADING -->
-    <div id="screen-loading" class="screen active">
+    <div id="screen-loading" class="screen active" aria-live="polite">
       <div class="loading-wrap">
-        <div class="spinner"></div>
+        <div class="spinner" role="status" aria-label="Loading"></div>
         <div class="loading-text">Loading…</div>
       </div>
     </div>
 
     <!-- EMAIL -->
     <div id="screen-email" class="screen">
-      <div class="eyebrow"><span class="eyebrow-dot"></span>Welcome to Customer Feedback Week! 👋</div>
+      <div class="eyebrow" aria-hidden="true"><span class="eyebrow-dot"></span>Welcome to Customer Feedback Week! 👋</div>
       <h1>Help us build what <span>matters</span> to you</h1>
       <div class="hero-sub">
         <p>This is your opportunity to help shape what's next in Element451. You'll have 10 points to distribute across potential features our team is exploring. Vote for the enhancements that would have the biggest impact on your institution—your input helps shape our future roadmap and influences what we build over the next 6–12 months.</p>
@@ -210,19 +284,26 @@
       <div class="card">
         <label class="field-label" for="email-input">Your work email</label>
         <div class="email-row">
-          <input type="email" id="email-input" placeholder="you@institution.edu" autocomplete="email" />
+          <input
+            type="email"
+            id="email-input"
+            placeholder="you@institution.edu"
+            autocomplete="email"
+            aria-required="true"
+            aria-describedby="email-error-msg"
+          />
           <button class="btn-primary" id="email-btn" onclick="checkEmail()">
             <span id="email-btn-label">Continue</span>
-            <svg id="email-btn-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span id="email-btn-spinner" class="inline-spinner" style="display:none"></span>
+            <svg id="email-btn-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="email-btn-spinner" class="inline-spinner" style="display:none" aria-hidden="true"></span>
           </button>
         </div>
-        <div class="email-error" id="email-error">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#C0392B" stroke-width="1.5"/><path d="M7 4v3.5M7 9.5v.5" stroke="#C0392B" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="email-error" id="email-error" role="alert" aria-live="assertive">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="6" stroke="#C0392B" stroke-width="1.5"/><path d="M7 4v3.5M7 9.5v.5" stroke="#C0392B" stroke-width="1.5" stroke-linecap="round"/></svg>
           <span id="email-error-msg">That email isn't on our list. Reach out to your account manager for access.</span>
         </div>
-        <div class="trust-line">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5l4 1.5v3.5c0 2.5-1.5 4-4 5-2.5-1-4-2.5-4-5V3l4-1.5z" stroke="#C4C4C4" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        <div class="trust-line" aria-label="Access gated — only invited customers can participate">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"><path d="M6.5 1.5l4 1.5v3.5c0 2.5-1.5 4-4 5-2.5-1-4-2.5-4-5V3l4-1.5z" stroke="#6B6B6B" stroke-width="1.2" stroke-linejoin="round"/></svg>
           Access-gated — only invited customers can participate
         </div>
       </div>
@@ -230,58 +311,66 @@
 
     <!-- VOTE -->
     <div id="screen-vote" class="screen">
-      <div id="tester-vote-banner" class="tester-banner" style="display:none">
+      <div id="tester-vote-banner" class="tester-banner" style="display:none" role="status">
         🧪 <span><strong>Testing mode</strong> — your vote will be flagged as a test response</span>
       </div>
       <div class="vote-header">
-        <div class="eyebrow"><span class="eyebrow-dot"></span>Welcome to Customer Feedback Week! 👋</div>
+        <div class="eyebrow" aria-hidden="true"><span class="eyebrow-dot"></span>Welcome to Customer Feedback Week! 👋</div>
         <h2>Which features should we build <span>first?</span></h2>
         <div class="vote-header-sub">
           <p>Use + and − to distribute your 10 points across the ideas that would have the biggest impact on your institution. Concentrate your votes on one idea or spread them across several—every vote helps us better understand what will create the most value for our community.</p>
           <p>You'll have until July 25 at midnight PDT to submit your responses.</p>
         </div>
       </div>
-      <div class="budget-strip">
+
+      <div class="budget-strip" role="region" aria-label="Points remaining">
         <div class="budget-inner">
           <div>
-            <div class="budget-left-label">Points remaining</div>
-            <div class="budget-number" id="budget-num">10</div>
+            <div class="budget-left-label" id="budget-label">Points remaining</div>
+            <div
+              class="budget-number"
+              id="budget-num"
+              aria-live="polite"
+              aria-atomic="true"
+              aria-labelledby="budget-label"
+            >10</div>
           </div>
-          <div class="budget-dots" id="budget-dots"></div>
+          <div class="budget-dots" id="budget-dots" aria-hidden="true"></div>
         </div>
       </div>
-      <div class="feature-list" id="feature-list"></div>
+
+      <div class="feature-list" id="feature-list" role="list"></div>
+
       <div class="submit-area">
-        <button class="btn-submit" id="submit-btn" onclick="submitVotes()" disabled>
+        <button class="btn-submit" id="submit-btn" onclick="submitVotes()" disabled aria-disabled="true">
           <span id="submit-label">Submit my votes</span>
-          <svg id="submit-arrow" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5h11M8.5 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span id="submit-spinner" class="inline-spinner" style="display:none"></span>
+          <svg id="submit-arrow" width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M2 7.5h11M8.5 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="submit-spinner" class="inline-spinner" style="display:none" aria-hidden="true"></span>
         </button>
-        <div class="submit-hint" id="submit-hint">Allocate all 10 points to submit</div>
-        <div class="error-banner" id="submit-error">Something went wrong submitting your votes. Please try again.</div>
+        <div class="submit-hint" id="submit-hint" aria-live="polite">Allocate all 10 points to submit</div>
+        <div class="error-banner" id="submit-error" role="alert">Something went wrong submitting your votes. Please try again.</div>
       </div>
     </div>
 
-    <!-- CONFIRM / RETURNING / EXPIRED — all rendered into this single screen -->
+    <!-- CONFIRM (all end states rendered here) -->
     <div id="screen-confirm" class="screen">
 
       <!-- Tester simulator (testers only) -->
       <div id="tester-sim-wrap" style="display:none">
         <div class="tester-sim">
-          <div class="tester-sim-label">🧪 Simulate end state</div>
-          <div class="tester-tabs">
-            <button class="tester-tab active" onclick="simState('voted-open')">✅ Voted (open)</button>
-            <button class="tester-tab" onclick="simState('returning-open')">🔁 Returning (open)</button>
-            <button class="tester-tab" onclick="simState('expired-voted')">🔒 Expired + voted</button>
-            <button class="tester-tab" onclick="simState('expired-missed')">🔒 Expired + missed</button>
+          <div class="tester-sim-label" id="tester-sim-label">🧪 Simulate end state</div>
+          <div class="tester-tabs" role="tablist" aria-labelledby="tester-sim-label">
+            <button class="tester-tab active" role="tab" aria-selected="true" onclick="simState('voted-open')">✅ Voted (open)</button>
+            <button class="tester-tab" role="tab" aria-selected="false" onclick="simState('returning-open')">🔁 Returning (open)</button>
+            <button class="tester-tab" role="tab" aria-selected="false" onclick="simState('expired-voted')">🔒 Expired + voted</button>
+            <button class="tester-tab" role="tab" aria-selected="false" onclick="simState('expired-missed')">🔒 Expired + missed</button>
           </div>
         </div>
       </div>
 
-      <!-- Dynamic content rendered here -->
-      <div id="confirm-content"></div>
+      <!-- Dynamic content -->
+      <div id="confirm-content" aria-live="polite"></div>
 
-      <!-- Tester reset button -->
       <button class="btn-tester-reset" id="confirm-tester-reset" style="display:none" onclick="testerReset()">🧪 Testing — Start Over (resets your vote)</button>
       <button class="start-over" id="confirm-start-over" style="display:none" onclick="startOver()">↩ Start over</button>
     </div>
@@ -289,13 +378,13 @@
   </div>
 </main>
 
-<footer>Element451 · Confidential — for invited customers only</footer>
+<footer>
+  <p>Element451 · Confidential — for invited customers only</p>
+</footer>
 
 <script>
 const API = "https://script.google.com/macros/s/AKfycbwzINhUnJeOp--AP30tyAfgNuFR9ec7Q97fjdKlB3bH_apaxVj7eM7O1xGW_x9OT4s/exec";
 const TOTAL = 10;
-
-// Deadline: July 26 2026 07:00 UTC = July 25 midnight PDT
 const DEADLINE = new Date('2026-07-26T07:00:00Z');
 
 let features = [];
@@ -306,14 +395,23 @@ let currentPriorVotes = null;
 let currentHasVoted = false;
 let cachedLeaderboard = null;
 
-function isPastDeadline() {
-  return new Date() > DEADLINE;
-}
+function isPastDeadline() { return new Date() > DEADLINE; }
 
-function showScreen(name) {
+function showScreen(name, focusSelector) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
+  const screen = document.getElementById('screen-' + name);
+  screen.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Move focus to the screen for screen reader users
+  requestAnimationFrame(() => {
+    const target = focusSelector
+      ? screen.querySelector(focusSelector)
+      : screen.querySelector('h1, h2, [tabindex="-1"]');
+    if (target) {
+      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+      target.focus({ preventScroll: true });
+    }
+  });
 }
 
 async function apiFetch(params) {
@@ -334,7 +432,7 @@ async function boot() {
     if (data.error || !data.features) throw new Error(data.error || 'No features');
     features = data.features;
     features.forEach(f => votes[f.id] = 0);
-    showScreen('email');
+    showScreen('email', '#email-input');
   } catch(e) {
     document.querySelector('.loading-text').textContent = 'Failed to load. Please refresh.';
   }
@@ -344,42 +442,44 @@ async function boot() {
 async function checkEmail() {
   const val = document.getElementById('email-input').value.trim().toLowerCase();
   if (!val) return;
-  const err = document.getElementById('email-error');
+  const errDiv = document.getElementById('email-error');
   const btn = document.getElementById('email-btn');
   const arrow = document.getElementById('email-btn-arrow');
   const spinner = document.getElementById('email-btn-spinner');
 
-  btn.disabled = true; arrow.style.display = 'none'; spinner.style.display = 'block'; err.style.display = 'none';
+  btn.disabled = true; arrow.style.display = 'none'; spinner.style.display = 'block';
+  errDiv.style.display = 'none';
+  document.getElementById('email-input').removeAttribute('aria-invalid');
 
   try {
     const data = await apiFetch({ action: 'checkVoter', email: val });
     if (!data.allowed) {
       document.getElementById('email-error-msg').textContent = "That email isn't on our list. Reach out to your account manager for access.";
-      err.style.display = 'flex';
+      errDiv.style.display = 'flex';
+      document.getElementById('email-input').setAttribute('aria-invalid', 'true');
+      document.getElementById('email-input').focus();
     } else {
       currentEmail = val;
       currentIsTester = data.isTester === true;
       currentHasVoted = data.hasVoted === true;
       currentPriorVotes = data.priorVotes || null;
-
-      // Pre-fetch leaderboard
       try { cachedLeaderboard = await apiFetch({ action: 'getLeaderboard' }); } catch(e) {}
 
       if (isPastDeadline()) {
-        // Post-deadline: skip voting, go straight to confirm screen
         buildConfirmScreen(currentHasVoted ? 'expired-voted' : 'expired-missed');
-        showScreen('confirm');
+        showScreen('confirm', 'h2');
       } else if (data.hasVoted) {
         buildConfirmScreen('returning-open');
-        showScreen('confirm');
+        showScreen('confirm', 'h2');
       } else {
         buildVoteUI();
-        showScreen('vote');
+        showScreen('vote', 'h2');
       }
     }
   } catch(e) {
     document.getElementById('email-error-msg').textContent = 'Connection error. Please try again.';
-    err.style.display = 'flex';
+    errDiv.style.display = 'flex';
+    document.getElementById('email-input').setAttribute('aria-invalid', 'true');
   }
 
   btn.disabled = false; arrow.style.display = ''; spinner.style.display = 'none';
@@ -393,20 +493,23 @@ function buildVoteUI() {
   const list = document.getElementById('feature-list');
   list.innerHTML = '';
   features.forEach((f, i) => {
-    const d = document.createElement('div');
-    d.className = 'fcard'; d.id = 'fcard-' + f.id;
-    d.innerHTML = `
-      <div class="fcard-num">${String(i+1).padStart(2,'0')}</div>
-      <div class="fcard-body">
+    const item = document.createElement('div');
+    item.className = 'fcard'; item.id = 'fcard-' + f.id;
+    item.setAttribute('role', 'listitem');
+    item.innerHTML = `
+      <div class="fcard-num" aria-hidden="true">${String(i+1).padStart(2,'0')}</div>
+      <div class="fcard-body" id="feature-label-${f.id}">
         <div class="fcard-name">${f.name}</div>
         <div class="fcard-desc">${f.desc}</div>
       </div>
-      <div class="stepper">
-        <button class="sbtn" id="m-${f.id}" onclick="adjust(${f.id},-1)" disabled>−</button>
-        <span class="sval" id="v-${f.id}">0</span>
-        <button class="sbtn" id="p-${f.id}" onclick="adjust(${f.id},1)">+</button>
+      <div class="stepper" role="group" aria-labelledby="feature-label-${f.id}">
+        <button class="sbtn" id="m-${f.id}" onclick="adjust(${f.id},-1)" disabled
+          aria-label="Remove point from ${f.name}">−</button>
+        <span class="sval" id="v-${f.id}" aria-label="${f.name}: 0 points">0</span>
+        <button class="sbtn" id="p-${f.id}" onclick="adjust(${f.id},1)"
+          aria-label="Add point to ${f.name}">+</button>
       </div>`;
-    list.appendChild(d);
+    list.appendChild(item);
   });
   renderBudget();
 }
@@ -417,7 +520,10 @@ function adjust(id, delta) {
   if (nv < 0 || (delta > 0 && used >= TOTAL)) return;
   votes[id] = nv;
   const ve = document.getElementById('v-'+id);
-  ve.textContent = nv; ve.className = 'sval' + (nv > 0 ? ' on' : '');
+  ve.textContent = nv;
+  ve.className = 'sval' + (nv > 0 ? ' on' : '');
+  const fname = features.find(f => f.id === id)?.name || '';
+  ve.setAttribute('aria-label', `${fname}: ${nv} point${nv !== 1 ? 's' : ''}`);
   document.getElementById('fcard-'+id).className = 'fcard' + (nv > 0 ? ' on' : '');
   document.getElementById('m-'+id).disabled = nv === 0;
   renderBudget();
@@ -427,7 +533,8 @@ function renderBudget() {
   const used = Object.values(votes).reduce((a,b) => a+b, 0);
   const rem = TOTAL - used;
   const ne = document.getElementById('budget-num');
-  ne.textContent = rem; ne.className = 'budget-number' + (rem === 0 ? ' zero' : '');
+  ne.textContent = rem;
+  ne.className = 'budget-number' + (rem === 0 ? ' zero' : '');
   const de = document.getElementById('budget-dots');
   de.innerHTML = '';
   for (let i = 0; i < TOTAL; i++) {
@@ -436,8 +543,10 @@ function renderBudget() {
     de.appendChild(d);
   }
   features.forEach(f => { const pb = document.getElementById('p-'+f.id); if(pb) pb.disabled = rem === 0; });
-  const sb = document.getElementById('submit-btn'), sh = document.getElementById('submit-hint');
+  const sb = document.getElementById('submit-btn');
+  const sh = document.getElementById('submit-hint');
   sb.disabled = rem !== 0;
+  sb.setAttribute('aria-disabled', rem !== 0 ? 'true' : 'false');
   if (rem === 0) { sh.textContent = 'Ready — go ahead and submit!'; sh.className = 'submit-hint ready'; }
   else if (rem === TOTAL) { sh.textContent = 'Allocate all 10 points to submit'; sh.className = 'submit-hint'; }
   else { sh.textContent = `${rem} point${rem !== 1 ? 's' : ''} left to allocate`; sh.className = 'submit-hint'; }
@@ -451,78 +560,84 @@ async function submitVotes() {
   const spinner = document.getElementById('submit-spinner');
   const errBanner = document.getElementById('submit-error');
 
-  btn.disabled = true; label.textContent = 'Submitting…'; arrow.style.display = 'none'; spinner.style.display = 'block'; errBanner.style.display = 'none';
+  btn.disabled = true; label.textContent = 'Submitting…';
+  arrow.style.display = 'none'; spinner.style.display = 'block'; errBanner.style.display = 'none';
 
   try {
     const result = await apiPost({ action: 'submitVotes', email: currentEmail, votes, isTester: currentIsTester });
     if (result.error) throw new Error(result.error);
-    currentHasVoted = true;
-    currentPriorVotes = {...votes};
+    currentHasVoted = true; currentPriorVotes = {...votes};
     try { cachedLeaderboard = await apiFetch({ action: 'getLeaderboard' }); } catch(e) {}
     buildConfirmScreen('voted-open');
-    showScreen('confirm');
+    showScreen('confirm', 'h2');
   } catch(e) {
     errBanner.style.display = 'block';
-    btn.disabled = false; label.textContent = 'Submit my votes'; arrow.style.display = ''; spinner.style.display = 'none';
+    btn.disabled = false; label.textContent = 'Submit my votes';
+    arrow.style.display = ''; spinner.style.display = 'none';
   }
 }
 
 // ── Build confirm screen ──────────────────────────────────────
 function buildConfirmScreen(state) {
-  // Show tester sim UI
   document.getElementById('tester-sim-wrap').style.display = currentIsTester ? 'block' : 'none';
   document.getElementById('confirm-tester-reset').style.display = currentIsTester ? 'block' : 'none';
   document.getElementById('confirm-start-over').style.display = currentIsTester ? 'none' : 'block';
 
-  // Update active tab
-  document.querySelectorAll('.tester-tab').forEach(t => t.classList.remove('active'));
-  const tabMap = {'voted-open':0,'returning-open':1,'expired-voted':2,'expired-missed':3};
-  const tabs = document.querySelectorAll('.tester-tab');
-  if (tabs[tabMap[state]]) tabs[tabMap[state]].classList.add('active');
+  // Update tab states
+  const tabStates = ['voted-open','returning-open','expired-voted','expired-missed'];
+  document.querySelectorAll('.tester-tab').forEach((t, i) => {
+    const isActive = tabStates[i] === state;
+    t.classList.toggle('active', isActive);
+    t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
 
   const isExpired = state.startsWith('expired');
-  const hasVotes = state === 'voted-open' || state === 'returning-open' || state === 'expired-voted';
+  const hasVotes = ['voted-open','returning-open','expired-voted'].includes(state);
   const isReturning = state === 'returning-open';
 
   let topCard = '';
 
   if (isExpired && !hasVotes) {
-    // Expired + didn't vote
     topCard = `
-      <div class="result-card">
-        <div class="missed-icon">😔</div>
+      <article class="result-card">
+        <div class="missed-icon" aria-hidden="true">😔</div>
         <div class="closed-pill">⏰ Voting is now closed</div>
         <h2>We're sorry we missed you this time</h2>
-        <p>Customer Feedback Week has closed, and we weren't able to capture your input for this round. We truly value your perspective and hope you'll join us next time—your voice matters in shaping the future of Element451.</p>
-        <p style="font-size:14px;color:var(--gray-500);line-height:1.65;margin-top:0.75rem;">Keep an eye on your inbox for future feedback opportunities and updates on the features we're building based on this round of input.</p>
-      </div>`;
+        <p class="card-sub">Customer Feedback Week has closed, and we weren't able to capture your input for this round. We truly value your perspective and hope you'll join us next time—your voice matters in shaping the future of Element451.</p>
+        <p class="card-sub">Keep an eye on your inbox for future feedback opportunities and updates on the features we're building based on this round of input.</p>
+      </article>`;
   } else if (hasVotes) {
-    const voteData = isReturning || (isExpired && hasVotes) ? currentPriorVotes : votes;
-    const voted = features.filter(f => (Number(voteData?.[f.id]) || 0) > 0)
+    const voteData = (isReturning || isExpired) ? currentPriorVotes : votes;
+    const voted = features
+      .filter(f => (Number(voteData?.[f.id]) || 0) > 0)
       .sort((a,b) => (Number(voteData[b.id])||0) - (Number(voteData[a.id])||0));
-    const myVotesHtml = voted.length > 0 ? renderMyVotes(voted, voteData)
-      : '<p style="font-size:13px;color:var(--gray-400)">Vote details not available.</p>';
+    const myVotesHtml = voted.length > 0
+      ? renderMyVotes(voted, voteData)
+      : '<p style="font-size:13px;color:var(--gray-500)">Vote details not available.</p>';
 
-    const headingText = isExpired ? 'Thank you for your participation!' : (isReturning ? 'You\'ve already voted' : 'Thanks for your input!');
+    const heading = isExpired ? 'Thank you for your participation!'
+      : isReturning ? 'You\'ve already voted'
+      : 'Thanks for your input!';
     const subText = isExpired
       ? 'Voting has now closed. Here\'s a recap of how you distributed your 10 points.'
-      : (isReturning ? 'Here\'s a recap of how you distributed your 10 points.' : 'Your votes are recorded. Here\'s how you distributed your 10 points.');
+      : isReturning ? 'Here\'s a recap of how you distributed your 10 points.'
+      : 'Your votes are recorded. Here\'s how you distributed your 10 points.';
 
     topCard = `
-      <div class="result-card">
+      <article class="result-card">
         ${isExpired ? '<div class="closed-pill">⏰ Voting is now closed</div>' : ''}
-        <div class="confirm-icon">
+        <div class="confirm-icon" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4.5 11l5 5 8-9" stroke="#FE5000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <h2>${headingText}</h2>
-        <p>${subText}</p>
-        <div class="section-label">Your allocation</div>
-        <div class="my-votes">${myVotesHtml}</div>
-        <div class="result-footer">We'll use this feedback when planning our roadmap. Keep an eye on your inbox for product updates and announcements.</div>
-      </div>`;
+        <h2>${heading}</h2>
+        <p class="card-sub">${subText}</p>
+        <h3 class="section-heading">Your allocation</h3>
+        <div class="my-votes" role="list">${myVotesHtml}</div>
+        <p class="result-footer">We'll use this feedback when planning our roadmap. Keep an eye on your inbox for product updates and announcements.</p>
+      </article>`;
   }
 
-  // Leaderboard card
+  // Leaderboard
   const lb = cachedLeaderboard;
   const lbTitle = isExpired ? '🏆 Final top 5' : '🏆 Current top 5';
   let lbRowsHtml = '';
@@ -538,37 +653,33 @@ function buildConfirmScreen(state) {
     lbRowsHtml = top5.map((f, i) => `
       <div class="lb-row">
         <div class="lb-row-top">
-          <span class="lb-medal">${medals[i]}</span>
+          <span class="lb-medal" aria-hidden="true">${medals[i]}</span>
           <div class="lb-name">${f.name}</div>
           <div class="lb-pts">${f.pts} pts</div>
           <div class="lb-pct">${f.pct}%</div>
         </div>
-        <div class="lb-track"><div class="lb-fill r${i}" style="width:${Math.round(f.pts/maxPts*100)}%"></div></div>
+        <div class="lb-track" role="img" aria-label="${f.name}: ${f.pts} points, ${f.pct}% of total">
+          <div class="lb-fill r${i}" style="width:${Math.round(f.pts/maxPts*100)}%"></div>
+        </div>
       </div>`).join('');
   }
 
-  const appreciationNote = `
-    <div class="lb-appreciation">
-      <strong>We appreciate the community's feedback and are reviewing it closely.</strong> Remember, this is one important signal — alongside many others — that we'll use to influence our roadmap over the next 6–12 months. Thank you for taking the time to share your perspective.
-    </div>`;
-
   const lbCard = `
-    <div class="lb-card">
+    <section class="lb-card" aria-labelledby="lb-heading">
       <div class="lb-header">
-        <div class="lb-title">${lbTitle}</div>
-        <div class="lb-meta">${lbMetaText}</div>
+        <h2 class="lb-title" id="lb-heading">${lbTitle}</h2>
+        <div class="lb-meta" aria-label="${lbMetaText}">${lbMetaText}</div>
       </div>
       <div class="lb-rows">${lbRowsHtml}</div>
-      ${appreciationNote}
-    </div>`;
+      <div class="lb-appreciation">
+        <strong>We appreciate the community's feedback and are reviewing it closely.</strong> Remember, this is one important signal — alongside many others — that we'll use to influence our roadmap over the next 6–12 months. Thank you for taking the time to share your perspective.
+      </div>
+    </section>`;
 
   document.getElementById('confirm-content').innerHTML = topCard + lbCard;
 }
 
-// ── Tester state simulator ────────────────────────────────────
-function simState(state) {
-  buildConfirmScreen(state);
-}
+function simState(state) { buildConfirmScreen(state); }
 
 // ── Tester reset ──────────────────────────────────────────────
 async function testerReset() {
@@ -578,7 +689,7 @@ async function testerReset() {
   features.forEach(f => votes[f.id] = 0);
   currentHasVoted = false; currentPriorVotes = null;
   buildVoteUI();
-  showScreen('vote');
+  showScreen('vote', 'h2');
   btn.disabled = false; btn.textContent = '🧪 Testing — Start Over (resets your vote)';
 }
 
@@ -586,10 +697,10 @@ async function testerReset() {
 function renderMyVotes(voted, voteMap) {
   return voted.map(f => {
     const pts = Number(voteMap[f.id]) || 0;
-    return `<div class="mv-row">
+    return `<div class="mv-row" role="listitem">
       <div class="mv-name">${f.name}</div>
-      <div class="mv-bar-wrap"><div class="mv-bar-fill" style="width:${pts*10}%"></div></div>
-      <div class="mv-pts">${pts} pt${pts !== 1 ? 's' : ''}</div>
+      <div class="mv-bar-wrap" aria-hidden="true"><div class="mv-bar-fill" style="width:${pts*10}%"></div></div>
+      <div class="mv-pts" aria-label="${pts} point${pts !== 1 ? 's' : ''}">${pts} pt${pts !== 1 ? 's' : ''}</div>
     </div>`;
   }).join('');
 }
@@ -600,7 +711,8 @@ function startOver() {
   currentEmail = ''; currentIsTester = false; currentHasVoted = false; currentPriorVotes = null;
   document.getElementById('email-input').value = '';
   document.getElementById('email-error').style.display = 'none';
-  showScreen('email');
+  document.getElementById('email-input').removeAttribute('aria-invalid');
+  showScreen('email', '#email-input');
 }
 
 boot();
