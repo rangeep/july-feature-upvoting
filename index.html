@@ -229,6 +229,50 @@
 
   footer { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--gray-500); border-top: 1px solid var(--gray-100); }
 
+
+  /* Full leaderboard screen (testers only) */
+  .btn-full-lb {
+    display: block; width: 100%; margin-top: 10px; height: 44px;
+    background: white; color: var(--gray-900);
+    border: 1.5px solid var(--gray-100); border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    outline: none;
+  }
+  .btn-full-lb:hover { background: var(--gray-50); border-color: var(--gray-400); }
+  .btn-full-lb:focus-visible { box-shadow: var(--focus-ring); outline: 2px solid var(--orange); outline-offset: 2px; }
+
+  .full-lb-header { margin-bottom: 2rem; }
+  .full-lb-header h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.025em; color: var(--black); margin-bottom: 0.4rem; }
+  .full-lb-header p { font-size: 14px; color: var(--gray-500); line-height: 1.65; }
+  .full-lb-tester-note { background: var(--tester-bg); border: 1px solid var(--tester-border); border-radius: 12px; padding: 10px 14px; margin-bottom: 1.5rem; font-size: 12px; color: var(--tester-text); }
+
+  .full-lb-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px; padding: 1.5rem 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px; }
+  .full-lb-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
+  .full-lb-row:last-child { border-bottom: none; }
+  .full-lb-rank { font-size: 12px; font-weight: 700; color: var(--gray-500); min-width: 24px; text-align: center; flex-shrink: 0; }
+  .full-lb-rank.top { color: var(--orange); }
+  .full-lb-info { flex: 1; min-width: 0; }
+  .full-lb-name { font-size: 13px; font-weight: 500; color: var(--black); margin-bottom: 4px; }
+  .full-lb-bar-row { display: flex; align-items: center; gap: 8px; }
+  .full-lb-track { flex: 1; height: 5px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+  .full-lb-fill { height: 100%; background: var(--orange); border-radius: 3px; transition: width 0.6s ease 0.1s; opacity: 1; }
+  .full-lb-fill.dim { background: var(--gray-400); opacity: 0.6; }
+  .full-lb-stats { display: flex; gap: 10px; flex-shrink: 0; }
+  .full-lb-pts { font-size: 12px; font-weight: 600; color: var(--gray-900); font-variant-numeric: tabular-nums; min-width: 52px; text-align: right; }
+  .full-lb-pct { font-size: 12px; color: var(--gray-500); min-width: 36px; text-align: right; }
+
+  .btn-back {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: none; border: none; font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 500; color: var(--gray-500);
+    cursor: pointer; padding: 6px 0; margin-bottom: 1.5rem;
+    text-decoration: none; outline: none;
+  }
+  .btn-back:hover { color: var(--black); }
+  .btn-back:focus-visible { box-shadow: var(--focus-ring); border-radius: 4px; outline: 2px solid var(--orange); outline-offset: 2px; }
+
   @media (max-width: 480px) {
     h1 { font-size: 30px; }
     .container { padding: 2rem 1rem 3rem; }
@@ -378,9 +422,36 @@
       <div id="confirm-content" aria-live="polite"></div>
 
       <button class="btn-tester-reset" id="confirm-tester-reset" style="display:none" onclick="testerReset()">🧪 Testing — Start Over (resets your vote)</button>
+      <button class="btn-full-lb" id="confirm-full-lb" style="display:none" onclick="showFullBoard(true)">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M2 4h11M2 7.5h8M2 11h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        📊 Full Leaderboard
+      </button>
       <button class="start-over" id="confirm-start-over" style="display:none" onclick="startOver()">↩ Start over</button>
     </div>
 
+
+    <!-- FULL LEADERBOARD (testers only) -->
+    <div id="screen-fullboard" class="screen">
+      <button class="btn-back" onclick="showFullBoard(false)" aria-label="Back to results">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to results
+      </button>
+      <div class="full-lb-header">
+        <div class="eyebrow" aria-hidden="true"><span class="eyebrow-dot"></span>Tester view</div>
+        <h2>Full results dashboard</h2>
+        <p>All 20 features ranked by total points. Live data — refreshed each time you visit this screen.</p>
+      </div>
+      <div class="full-lb-tester-note">
+        🧪 <strong>Testers only</strong> — this screen is not visible to standard voters.
+      </div>
+      <div id="fullboard-loading" style="text-align:center;padding:2rem 0;">
+        <div class="spinner" role="status" aria-label="Loading leaderboard" style="margin:0 auto"></div>
+      </div>
+      <div id="fullboard-content" style="display:none">
+        <div class="full-lb-card" id="fullboard-card"></div>
+        <p style="font-size:12px;color:var(--gray-500);text-align:center;margin-top:8px;" id="fullboard-meta"></p>
+      </div>
+    </div>
   </div>
 </main>
 
@@ -400,6 +471,7 @@ let currentIsTester = false;
 let currentPriorVotes = null;
 let currentHasVoted = false;
 let cachedLeaderboard = null;
+let lastConfirmState = 'voted-open';
 
 function isPastDeadline() { return new Date() > DEADLINE; }
 
@@ -586,8 +658,10 @@ async function submitVotes() {
 
 // ── Build confirm screen ──────────────────────────────────────
 function buildConfirmScreen(state) {
+  lastConfirmState = state;
   document.getElementById('tester-sim-wrap').style.display = currentIsTester ? 'block' : 'none';
   document.getElementById('confirm-tester-reset').style.display = currentIsTester ? 'block' : 'none';
+  document.getElementById('confirm-full-lb').style.display = currentIsTester ? 'block' : 'none';
   document.getElementById('confirm-start-over').style.display = currentIsTester ? 'none' : 'block';
 
   // Update tab states
@@ -722,13 +796,74 @@ function startOver() {
   showScreen('email', '#email-input');
 }
 
+
+// ── Full leaderboard (testers only) ──────────────────────────
+async function showFullBoard(goToBoard) {
+  if (goToBoard) {
+    showScreen('fullboard', 'h2');
+    await buildFullBoard();
+  } else {
+    buildConfirmScreen(lastConfirmState || 'voted-open');
+    showScreen('confirm', 'h2');
+  }
+}
+
+async function buildFullBoard() {
+  document.getElementById('fullboard-loading').style.display = 'block';
+  document.getElementById('fullboard-content').style.display = 'none';
+
+  try {
+    const lb = await apiFetch({ action: 'getLeaderboard' });
+    if (!lb || lb.error) throw new Error(lb?.error || 'Failed');
+
+    const { top5 = [], grandTotal = 0, totalResponses = 0 } = lb;
+
+    // Use full ranked list from API if available, fallback to features merge
+    const allItems = lb.ranked && lb.ranked.length > 0
+      ? lb.ranked.map(r => ({ ...r, name: features.find(f => f.id === r.id)?.name || r.name }))
+      : features.map(f => {
+          const match = top5.find(t => t.id === f.id);
+          return { id: f.id, name: f.name, pts: match ? match.pts : 0, pct: match ? match.pct : 0 };
+        }).sort((a, b) => b.pts - a.pts);
+
+    const maxPts = allItems[0]?.pts || 1;
+
+    document.getElementById('fullboard-card').innerHTML = allItems.map((f, i) => `
+      <div class="full-lb-row">
+        <div class="full-lb-rank ${i < 5 ? 'top' : ''}">${i + 1}</div>
+        <div class="full-lb-info">
+          <div class="full-lb-name">${f.name}</div>
+          <div class="full-lb-bar-row">
+            <div class="full-lb-track" role="img" aria-label="${f.pts} points, ${f.pct}%">
+              <div class="full-lb-fill ${i >= 5 ? 'dim' : ''}" style="width:${maxPts > 0 ? Math.round(f.pts/maxPts*100) : 0}%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="full-lb-stats">
+          <div class="full-lb-pts">${f.pts} pts</div>
+          <div class="full-lb-pct">${f.pct}%</div>
+        </div>
+      </div>`).join('');
+
+    document.getElementById('fullboard-meta').textContent =
+      `${totalResponses} response${totalResponses !== 1 ? 's' : ''} · ${grandTotal} total points cast · Live data`;
+
+    document.getElementById('fullboard-loading').style.display = 'none';
+    document.getElementById('fullboard-content').style.display = 'block';
+  } catch(e) {
+    document.getElementById('fullboard-loading').innerHTML =
+      '<p style="color:#C0392B;font-size:13px;">Failed to load leaderboard. Please go back and try again.</p>';
+  }
+}
+
 // ── Dynamic page title ───────────────────────────────────────
 function updateTitle(screen) {
   const titles = {
     'loading':  'Element451 — Loading',
     'email':    'Element451 — Customer Feedback Week',
     'vote':     'Element451 — Cast Your Votes',
-    'confirm':  'Element451 — Thank You'
+    'confirm':  'Element451 — Thank You',
+    'fullboard': 'Element451 — Full Results'
   };
   document.title = titles[screen] || 'Element451 — Feature Voting';
 }
