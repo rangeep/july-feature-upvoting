@@ -626,7 +626,14 @@ function renderBudget() {
   const sh = document.getElementById('submit-hint');
   sb.disabled = rem !== 0;
   sb.setAttribute('aria-disabled', rem !== 0 ? 'true' : 'false');
-  if (rem === 0) { sh.textContent = 'Ready — go ahead and submit!'; sh.className = 'submit-hint ready'; }
+  if (rem === 0) {
+    sh.textContent = 'Ready — go ahead and submit!'; sh.className = 'submit-hint ready';
+    // Smooth scroll to submit button
+    requestAnimationFrame(() => {
+      const submitArea = document.querySelector('.submit-area');
+      if (submitArea) submitArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
   else if (rem === TOTAL) { sh.textContent = 'Allocate all 10 points to submit'; sh.className = 'submit-hint'; }
   else { sh.textContent = `${rem} point${rem !== 1 ? 's' : ''} left to allocate`; sh.className = 'submit-hint'; }
 }
